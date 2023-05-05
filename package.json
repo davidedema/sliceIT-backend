@@ -1,0 +1,22 @@
+{
+  "name": "sliceit-backend",
+  "version": "1.0.0",
+  "description": "Backend per l'applicazione sliceIT",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidedema/sliceIT-backend.git"
+  },
+  "author": "De Martini Davide, Poinelli Francesco, Stiz Riccardo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidedema/sliceIT-backend/issues"
+  },
+  "homepage": "https://github.com/davidedema/sliceIT-backend#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
