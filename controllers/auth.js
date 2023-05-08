@@ -14,8 +14,12 @@ export const registerUser = async (req, res) => {
         } = req.body;
 
         // Check se mail è già presente nel db
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) return res.status(400).json({ message: "Email already exists" });
 
         // Check se nickname è già presente nel db
+        const existingNick = await User.findOne({ nickname });
+        if (existingNick) return res.status(400).json({ message: "Nickname already exists" });
 
 
         const salt = await bcrypt.genSalt();
