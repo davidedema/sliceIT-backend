@@ -8,7 +8,6 @@ export const validateToken = (req, res, next) => {
         if (token.startsWith("Bearer ")) {          // se il token inizia con "Bearer " -> settare a frontend
             token = token.slice(7, token.length).trimLeft();
         }
-
         const verified = jwt.verify(token, process.env.JWT_SECRET);
         req.user = verified;
         next();
