@@ -1,14 +1,14 @@
-import mongoose from "mongoose";    
+import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema(  
+const UserSchema = new mongoose.Schema(
     {
-        email: { 
+        email: {
             type: String,
             required: true,
-            max: 50,    
+            max: 50,
             unique: true
         },
-        nickname: {  
+        nickname: {
             type: String,
             required: true,
             min: 3,
@@ -37,12 +37,16 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
-        groups: [{   
-            type: mongoose.Schema.Types.ObjectId,   
+        groups: [{
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Group',
+        }],
+        outgoings: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Outgoing',
         }],
     }, { timestamps: true }
 );
 
-const User = mongoose.model("User", UserSchema);    
+const User = mongoose.model("User", UserSchema);
 export default User;    
