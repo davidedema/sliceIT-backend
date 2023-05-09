@@ -14,14 +14,18 @@ function generateInviteLink() {
 /*CREARE UN GRUPPO*/
 export const createGroup = async (req, res) => { 
     try {     
-      const { name } = req.body; 
-      const inviteLink = generateInviteLink();
-      const group = new Group({ name, inviteLink });
-      await group.save(); 
-      res.json({ group });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('error');
+        const { 
+            name,
+            descriprion,
+            groupPicture
+        } = req.body; 
+        const inviteLink = generateInviteLink();
+        const group = new Group({ name, descriprion, groupPicture, inviteLink });
+        await group.save(); 
+        res.json({ group });
+        } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: error.message });
     }
 };
 
