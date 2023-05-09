@@ -12,7 +12,8 @@ export const registerUser = async (req, res) => {
             name,
             surname
         } = req.body;
-
+        
+        console.log(email, nickname, password, name, surname);
         // Check se mail è già presente nel db
         const existingEmail = await User.findOne({ email });
         if (existingEmail) return res.status(400).json({ message: "Email already exists" });
@@ -43,6 +44,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(email, password);
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "Email doesn't exists" });
 
