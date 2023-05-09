@@ -22,7 +22,7 @@ export const createGroup = async (req, res) => {
         const inviteLink = generateInviteLink();
         const group = new Group({ name, descriprion, groupPicture, inviteLink });
         await group.save(); 
-        res.json({ group });
+        res.status(201).json({ group });
         } catch (error) {
         console.error(error);
         res.status(500).send({ message: error.message });

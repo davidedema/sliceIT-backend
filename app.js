@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
+import groupRoutes from './routes/group.js';
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +25,7 @@ app.use(cors());
 
 /* ROUTES */
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/groups", groupRoutes);
 
 /* MOONGOSE */
 const PORT = process.env.PORT || 6001;
