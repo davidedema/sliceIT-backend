@@ -1,34 +1,35 @@
-import mongoose from "mongoose";    
+import mongoose from "mongoose";
 
-const groupSchema = new mongoose.Schema({   //creare lo schema per il gruppo   
-    name: {   //nome del gruppo
+const groupSchema = new mongoose.Schema({   
+    name: {   
         type: String,
         required: true,
         max: 30,
     },
-    descriprion: {   //descrizione del gruppo
+    descriprion: {   
         type: String,
         default: "",
         max: 200
     },
-    groupPicture: {   //immagine del gruppo
+    groupPicture: {   
         type: String,
         default: "",
     },
-    inviteLink: {  //link per invitare altri utenti
+    inviteLink: {  
         type: String,
         required: true,
         unique: true,
     },
-    members: [{   //membri del gruppo
-        type: mongoose.Schema.Types.ObjectId,   //id dell'utente
+    members: [{   
+        type: mongoose.Schema.Types.ObjectId,  
         ref: 'User',
     }],
-    outgoings: [{  //spese del gruppo
-        type: mongoose.Schema.Types.ObjectId,   
+    outgoings: [{  
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Outgoing',
     }],
-});
+}, { timestamps: true }
+);
 
 const Group = mongoose.model('Group', groupSchema);
 module.exports = Group;
