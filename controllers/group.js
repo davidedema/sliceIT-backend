@@ -18,7 +18,7 @@ export const createGroup = async (req, res) => {
             name,
             descriprion,
             groupPicture
-        } = req.body; 
+        } = req.body;   
         const inviteLink = generateInviteLink();
         const group = new Group({ name, descriprion, groupPicture, inviteLink });
         await group.save(); 
@@ -32,17 +32,19 @@ export const createGroup = async (req, res) => {
 /*UNIRSI AD UN GRUPPO TRAMITE LINK INVITO*/
 export const joinGroup = async (req, res) => { 
     try {
-      const { inviteLink } = req.params;
+      const { inviteLink } = req.query;
+      const user = JSON.parse(req.body.user);
+      
       const group = await Group.findOne({ inviteLink });
       if (!group) {
         res.status(404).send('Group not found');
         return;
       }
-      if (group.members.includes(req.user._id)) {
+      if (group.members.includes(user._id)) {
         res.status(400).send('User already a member of the group');
           return;
       }
-      group.members.push(req.user._id);
+      group.members.push(user._id);
       await group.save();
       res.json({ group });
       } catch (error) {
