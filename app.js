@@ -8,11 +8,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 
-/*// SE IN PRODUZIONE USA SUOI .ENV
-if(process.env.NODE_ENV !== 'production'){
-    import dotenv from 'dotenv';
-}*/
-
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,10 +25,9 @@ app.use(cors());
 app.use("/api/v1/auth", authRoutes);
 
 /* MOONGOSE */
-const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || 8080;
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true, useUnifiedTopology: true
 }).then(() => {
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 }).catch((error) => console.log(error.message));
-const port = 3000;
