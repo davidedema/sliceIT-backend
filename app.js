@@ -3,10 +3,15 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
+
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+}
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
