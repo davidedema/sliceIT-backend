@@ -1,13 +1,17 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
+
+// SE IN PRODUZIONE USA SUOI .ENV
+if(process.env.NODE_ENV !== 'production'){
+    import dotenv from 'dotenv';
+}
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
