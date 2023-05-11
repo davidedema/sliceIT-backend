@@ -9,7 +9,7 @@ const groupSchema = new mongoose.Schema({
     descriprion: {   
         type: String,
         default: "",
-        max: 200
+        max: 200,
     },
     groupPicture: {   
         type: String,
