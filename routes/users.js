@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUser, updateUser, deleteUser } from '../controllers/users.js';
+import { getUser, getUserGroups, getUserOutgoings, updateUser, deleteUser } from '../controllers/users.js';
 import { validateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -108,6 +108,218 @@ const router = express.Router();
  *                   example: "Internal server error"  
  */
 router.get("/:id", validateToken, getUser);
+
+/**
+ * @swagger
+ * /api/v1/users/:id/groups:
+ *   get:
+ *     summary: Get the user groups by it's id
+ *     description: Get the user groups by it's id
+ *     tags: 
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the user
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: User found, return the groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 groups: 
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the group   
+ *                       name:
+ *                         type: string
+ *                         example: "name"
+ *                         description: Name of the group         
+ *                       desription:
+ *                         type: string
+ *                         example: "fordinner"
+ *                         description: Description of the group
+ *                       groupPicture:
+ *                         type: string
+ *                         example: "lemon.png"
+ *                         description: Picture uri of the group  
+ *                       inviteLink:
+ *                         type: string
+ *                         example: "https://example.com/invite/5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Invite link of the group 
+ *                       members:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                               description: Id of the user
+ *                       outgoings:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                               description: Id of the group
+ *         
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Not authorized"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
+router.get("/:id/groups", validateToken, getUserGroups);
+
+/**
+ * @swagger
+ * /api/v1/users/:id/outgoings:
+ *   get:
+ *     summary: Get the user outgoings by it's id
+ *     description: Get the user outgoings by it's id
+ *     tags: 
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the user
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: User found, return the outgoings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 outgoings: 
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the outgoing   
+ *                       name:
+ *                         type: string
+ *                         example: "name"
+ *                         description: Name of the outgoing         
+ *                       value:
+ *                         type: number
+ *                         example: "10"
+ *                         description: Value of the outgoing
+ *                       paidBy:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                             description: Id of the user  
+ *                       components:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                               description: Ids of the users
+ *                       group:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                             description: Ids of the users 
+ *                       isPeriodic:
+ *                         type: boolean
+ *                         example: "true"
+ *                         description: If the outgoing is periodic
+ *                       tag:
+ *                         type: string
+ *                         example: "food"
+ *                         description: Tag of the outgoing         
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Not authorized"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
+router.get("/:id/outgoings", validateToken, getUserOutgoings);
 
 /* UPDATE */
 
