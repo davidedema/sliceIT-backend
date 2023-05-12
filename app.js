@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
 import authRoutes from './routes/auth.js';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -16,7 +18,6 @@ if (process.env.NODE_ENV !== 'production') {
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -28,6 +29,44 @@ app.use(cors());
 
 /* ROUTES */
 app.use("/api/v1/auth", authRoutes);
+
+/* SWAGGER */
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: "3.0.0",
+        info: {
+            title: "API",
+            version: "1.0.0",
+            description: "REST API for the application sliceIT",
+        },
+        components: {
+            securitySchemes: {
+                jwt: {
+                    type: "http",
+                    scheme: "bearer",
+                    in: "header",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+    },
+    swaggerOptions: {
+        authAction: {
+            jwt: {
+                name: "JWT",
+                schema: {
+                    type: "http",
+                    in: "header",
+                },
+                value : "Bearer <JWT>",
+            },
+        }, 
+    },
+    apis: ["./routes/*.js"],
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 /* MOONGOSE */
 const PORT = process.env.PORT || 8080;
