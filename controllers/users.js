@@ -17,7 +17,31 @@ export const getUser = async (req, res) => {
     }
 }
 
+export const getUserGroups = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        const groups = await Group.find({ _id: { $in: user.groups } });
+        res.status(200).json(groups);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getUserOutgoings = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
+        res.status(200).json(outgoings);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
 export const updateUser = async (req, res) => {
+    // TODO: check se l'utente che fa la richiesta è l'utente che si vuole modificare
+    // TODO: check se email e nickname sono già presenti nel db
     try {
         const { id } = req.params;
         const {
