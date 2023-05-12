@@ -1,6 +1,7 @@
 import User from '../models/user.js';
 import Group from '../models/group.js';
 import Outgoing from '../models/outgoing.js';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 export const getUser = async (req, res) => {
@@ -20,6 +21,13 @@ export const getUser = async (req, res) => {
 export const getUserGroups = async (req, res) => {
     try {
         const { id } = req.params;
+        let token = req.header("x-auth-token");
+        if (token.startsWith("Bearer ")) {          
+            token = token.slice(7, token.length).trimLeft();
+        }
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
         const groups = await Group.find({ _id: { $in: user.groups } });
         res.status(200).json(groups);
@@ -31,6 +39,13 @@ export const getUserGroups = async (req, res) => {
 export const getUserOutgoings = async (req, res) => {
     try {
         const { id } = req.params;
+        let token = req.header("x-auth-token");
+        if (token.startsWith("Bearer ")) {          
+            token = token.slice(7, token.length).trimLeft();
+        }
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
         const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
         res.status(200).json(outgoings);
@@ -40,8 +55,6 @@ export const getUserOutgoings = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
-    // TODO: check se l'utente che fa la richiesta è l'utente che si vuole modificare
-    // TODO: check se email e nickname sono già presenti nel db
     try {
         const { id } = req.params;
         const {
@@ -51,6 +64,13 @@ export const updateUser = async (req, res) => {
             firstName,
             lastName,
         } = req.body;
+        let token = req.header("x-auth-token");
+        if (token.startsWith("Bearer ")) {          
+            token = token.slice(7, token.length).trimLeft();
+        }
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
         if (!user)
             return res.status(404).json({ message: 'User not found' });
@@ -78,6 +98,13 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
+        let token = req.header("x-auth-token");
+        if (token.startsWith("Bearer ")) {          
+            token = token.slice(7, token.length).trimLeft();
+        }
+        const verified = jwt.verify(token, process.env.JWT_SECRET);
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         try {
             const user = await User.findByIdAndDelete(id);
         } catch (error) {
