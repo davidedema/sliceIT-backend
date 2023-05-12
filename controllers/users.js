@@ -22,7 +22,7 @@ export const getUserGroups = async (req, res) => {
     try {
         const { id } = req.params;
         let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {          
+        if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
@@ -40,7 +40,7 @@ export const getUserOutgoings = async (req, res) => {
     try {
         const { id } = req.params;
         let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {          
+        if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
@@ -65,7 +65,7 @@ export const updateUser = async (req, res) => {
             lastName,
         } = req.body;
         let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {          
+        if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
@@ -74,6 +74,12 @@ export const updateUser = async (req, res) => {
         const user = await User.findById(id);
         if (!user)
             return res.status(404).json({ message: 'User not found' });
+
+        if (await User.findOne({ email: email }) && email !== user.email)
+            return res.status(400).json({ message: 'Email already exists' });
+
+        if (await User.findOne({ nickname: nickname }) && nickname !== user.nickname)
+            return res.status(400).json({ message: 'Nickname already exists' });
 
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
@@ -99,7 +105,7 @@ export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
         let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {          
+        if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
