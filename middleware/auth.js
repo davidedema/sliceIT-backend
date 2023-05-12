@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 export const validateToken = (req, res, next) => {
     try {
         let token = req.header("x-auth-token");     // il token si trova in x-auth-token
-        if (!token) return res.status(403).json({ message: "Access deniend" });
+        if (!token) return res.status(401).json({ message: "Not authorized" });
 
         if (token.startsWith("Bearer ")) {          // se il token inizia con "Bearer " -> settare a frontend
             token = token.slice(7, token.length).trimLeft();
