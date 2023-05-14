@@ -110,17 +110,45 @@ export const leaveGroup = async (req, res) => {
     }
 
     // Rimuovi l'utente dal gruppo
-    group.members.pull(userId);
-    await group.save();
+    const index = group.members.indexOf(userId);
+    if (index > -1) {
+      group.members.splice(index, 1);
+    }
 
     // Rimuovi il gruppo dall'utente
     const currentUser = await User.findById(userId);
     currentUser.groups.pull(groupId);
     await currentUser.save();
 
-    //manca l'eliminazione in caso non abbia più membri
+     // Se il gruppo è senza membri, elimina il gruppo dal database
+     if (group.members.length === 0) {
+      await Group.findByIdAndDelete(groupId);
+      res.json({ message: "Group deleted" });
+    } else {  // Altrimenti, salva le modifiche al gruppo
+      await group.save();
+      res.json({ group });
+    }
 
-    res.json({ group });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+/*RESTITUIRE I GRUPPI DI UN UTENTE*/
+export const getUserGroups = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId).populate('groups');
+    if (!user) {
+      res.status(404).send("User not found");
+      return;
+    }
+
+    const groups = user.groups;
+
+    res.json({ groups });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");

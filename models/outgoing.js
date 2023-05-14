@@ -1,40 +1,43 @@
 import mongoose from "mongoose";
 
-const outgoingSchema = new mongoose.Schema({
+const outgoingSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        max: 30,
+      type: String,
+      required: true,
+      max: 30,
     },
     value: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     paidBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    components: [{
+    components: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
         required: true,
-    }],
+      },
+    ],
     group: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group',
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
     },
     isPeriodic: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     tag: {
-        type: String,
-        default: "",
+      type: String,
+      default: "",
     },
-}, { timestamps: true }
+  },
+  { timestamps: true }
 );
 
-const Outgoing = mongoose.model('Outgoing', outgoingSchema);
+const Outgoing = mongoose.model("Outgoing", outgoingSchema);
 export default Outgoing;
