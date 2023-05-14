@@ -14,25 +14,23 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *  name: Group
- *  description: API to handle Groups
+ *  name: Groups
+ *  description: API to handle groups
  */
 
 /**
  * @swagger
- * /api/v1/group/createGroup:
+ * /api/v1/groups/createGroup:
  *   post:
  *     summary: create a new group
  *     description: create a new group
  *     tags:
- *       -
+ *       -  Groups
  *     produces:
- *       -
- *     consumes:
- *       -
+ *       -  application/json
  *     requestBody:
  *       content:
- *
+ *        application/json:
  *           schema:
  *             type: object
  *             required:
@@ -47,24 +45,38 @@ const router = express.Router();
  *                 type: string
  *                 example: "2Yq4Z5Q7X1x3Y4z5Q7x"
  *                 description: Link to join the group
- *     responses:
- *       201:
+ *               description:
+ *                type: string
+ *                example: "description example"
+ *                description: Description of the group
+ *               groupPicture:
+ *                type: string
+ *                example: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fgroup%2520of%2520people%2F&psig=AOvVaw0QZ4Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=" 
+ *     
+ *      responses:
+ *        201:
  *         description: Group created successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
- *               properties:
- *                group:
- *                 type: object
- *                 properties:
- *                  name:
- *                    type: string
- *                    example: "name"
- *                  inviteLink:
- *                    type: string
- *                    example: "2Yq4Z5Q7X1x3Y4z5Q7x"
- *
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "name"
+ *                 description: Name of the group
+ *               inviteLink:
+ *                 type: string
+ *                 example: "2Yq4Z5Q7X1x3Y4z5Q7x"
+ *                 description: Link to join the group
+ *               description:
+ *                type: string
+ *                example: "description example"
+ *                description: Description of the group
+ *               groupPicture:
+ *                type: string
+ *                example: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fgroup%2520of%2520people%2F&psig=AOvVaw0QZ4Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=" 
+ *  
  *       500:
  *         description: Internal server error
  *         content:
@@ -77,6 +89,8 @@ const router = express.Router();
  *                   example: "Internal server error"
  */
 router.post("/createGroup", validateToken, createGroup);
+
+
 router.put("/joinGroup", validateToken, joinGroup);
 router.put("/updateGroup/:groupId", validateToken, updateGroup);
 router.delete("/leaveGroup/:groupId", validateToken, leaveGroup);
