@@ -8,7 +8,15 @@ import {
   getUserGroups,
 } from "../controllers/group.js";
 import { validateToken } from "../middleware/auth.js";
+
 const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *  name: Group
+ *  description: API to handle Groups
+ */
 
 router.post("/createGroup", validateToken, createGroup);
 router.put("/joinGroup", validateToken, joinGroup);
