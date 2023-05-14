@@ -120,15 +120,15 @@ export const leaveGroup = async (req, res) => {
     currentUser.groups.pull(groupId);
     await currentUser.save();
 
-     // Se il gruppo è senza membri, elimina il gruppo dal database
-     if (group.members.length === 0) {
+    // Se il gruppo è senza membri, elimina il gruppo dal database
+    if (group.members.length === 0) {
       await Group.findByIdAndDelete(groupId);
       res.json({ message: "Group deleted" });
-    } else {  // Altrimenti, salva le modifiche al gruppo
+    } else {
+      // Altrimenti, salva le modifiche al gruppo
       await group.save();
       res.json({ group });
     }
-
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
@@ -140,7 +140,7 @@ export const getUserGroups = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const user = await User.findById(userId).populate('groups');
+    const user = await User.findById(userId).populate("groups");
     if (!user) {
       res.status(404).send("User not found");
       return;
@@ -153,4 +153,51 @@ export const getUserGroups = async (req, res) => {
     console.error(error);
     res.status(500).send("Internal server error");
   }
+};
+
+/*AGGIUNGERE UNA SPESA AD UN GRUPPO*/
+export const addOutgoing = async (req, res) => {
+  try {
+    const { name, value, paidBy, components, groupId } = req.body;
+
+    // Verifica che il gruppo esista
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Verifica che l'utente che paga sia membro del gruppo
+    if (!group.members.includes(paidBy)) {
+      return res
+        .status(400)
+        .json({ message: "PaidBy user is not a member of the group" });
+    }
+
+    // Crea la nuova spesa
+    const outgoing = new Outgoing({
+      name,
+      value,
+      paidBy,
+      components,
+      group: groupId,
+    });
+
+    // Salva la spesa nel gruppo
+    group.outgoings.push(outgoing._id);
+    await group.save();
+
+    // Salva la spesa nel database
+    await outgoing.save();
+
+    // Aggiorna gli outgoings dell'utente che paga la spesa
+    const user = await User.findById(paidBy);
+    user.outgoings.push(outgoing._id);
+    await user.save();
+
+    res.status(201).json({ outgoing });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+  /*manca la divisione della spesa e l'aggiunta della spesa nei membri*/
 };
