@@ -6,7 +6,7 @@ const groupSchema = new mongoose.Schema({
         required: true,
         max: 30,
     },
-    descriprion: {   
+    description: {   
         type: String,
         default: "",
         max: 200,
@@ -20,11 +20,11 @@ const groupSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    members: [{   
-        type: mongoose.Schema.Types.ObjectId,  
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }],
-    outgoings: [{  
+    outgoings: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Outgoing',
     }],

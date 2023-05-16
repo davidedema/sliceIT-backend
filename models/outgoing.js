@@ -14,18 +14,21 @@ const outgoingSchema = new mongoose.Schema(
     paidBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      
     },
-    components: [
-      {
+    loanedTo:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-      },
-    ],
+    },
     group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
+    },
+    description: {
+      type: String,
+      default: "",
+      max: 200,
     },
     isPeriodic: {
       type: Boolean,
