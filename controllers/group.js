@@ -47,24 +47,36 @@ export const createGroup = async (req, res) => {
 /*UNIRSI AD UN GRUPPO TRAMITE LINK INVITO*/
 export const joinGroup = async (req, res) => {
   try {
-    const { inviteLink } = req.query;
-    const user = JSON.parse(req.body.user);
+    const { inviteLink } = req.body;
+    console.log(inviteLink)
 
     const group = await Group.findOne({ inviteLink });
     if (!group) {
       res.status(404).send("Group not found");
       return;
     }
-    if (group.members.includes(user._id)) {
+
+    let token = req.header('x-auth-token');
+    if(token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length);
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+    
+
+    if (group.members.includes(userId)) {
       res.status(400).send("User already a member of the group");
       return;
     }
 
     // Aggiungi il gruppo all'utente corrente
-    const userId = req.user._id;
     const currentUser = await User.findById(userId);
     currentUser.groups.push(group._id);
     await currentUser.save();
+
+    // Aggiungi l'utente corrente al gruppo
+    group.members.push(userId);
+    await group.save();
 
     res.json({ group });
   } catch (error) {
@@ -121,7 +133,13 @@ export const leaveGroup = async (req, res) => {
       return;
     }
 
-    const userId = req.user._id;
+    // id utente
+    let token = req.header('x-auth-token');
+    if(token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length);
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
     if (!group.members.includes(userId)) {
       res.status(400).send("User is not a member of the group");
       return;
@@ -131,6 +149,11 @@ export const leaveGroup = async (req, res) => {
     const currentUser = await User.findById(userId);
     currentUser.groups.pull(groupId);
     await currentUser.save();
+
+    // Rimuovi l'utente dal gruppo
+    group.members.pull(userId);
+    await group.save();
+    
 
       //await group.save();
       res.json({ group });

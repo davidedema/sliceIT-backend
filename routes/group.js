@@ -88,7 +88,7 @@ const router = express.Router();
  */
 router.post("/createGroup", validateToken, createGroup);
 router.put("/joinGroup", validateToken, joinGroup);
-router.put("/updateGroup/:groupId", validateToken, updateGroup);
-router.delete("/leaveGroup/:groupId", validateToken, leaveGroup);
+router.put("/:groupId/updateGroup", validateToken, updateGroup);
+router.put("/:groupId/leaveGroup", validateToken, leaveGroup);
 
 export default router;
