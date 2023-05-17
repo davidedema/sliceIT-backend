@@ -1,5 +1,8 @@
 import express from "express";
 import {
+  getGroup,
+  getGroupUsers,
+  getGroupOutgoings,
   createGroup,
   joinGroup,
   updateGroup,
@@ -16,19 +19,25 @@ const router = express.Router();
  *  description: API to handle groups
  */
 
+/* READ */
+router.get("/:groupId/group", validateToken, getGroup);
+router.get("/:groupId/users", validateToken, getGroupUsers);
+router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
+
+/* POST */
 /**
  * @swagger
  * /api/v1/groups/createGroup:
  *   post:
- *     summary: create a new group
- *     description: create a new group
+ *     summary: Create a new group
+ *     description: Create a new group
  *     tags:
- *       -  Groups
+ *       - Groups
  *     produces:
- *       -  application/json
+ *       - application/json
  *     requestBody:
  *       content:
- *        application/json:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -44,37 +53,37 @@ const router = express.Router();
  *                 example: "2Yq4Z5Q7X1x3Y4z5Q7x"
  *                 description: Link to join the group
  *               description:
- *                type: string
- *                example: "description example"
- *                description: Description of the group
+ *                 type: string
+ *                 example: "description example"
+ *                 description: Description of the group
  *               groupPicture:
- *                type: string
- *                example: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fgroup%2520of%2520people%2F&psig=AOvVaw0QZ4Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=" 
- *     
- *      responses:
- *        201:
+ *                 type: string
+ *                 example: "https://example.com/new-group-picture.jpg"
+ *
+ *     responses:
+ *       201:
  *         description: Group created successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "name"
- *                 description: Name of the group
- *               inviteLink:
- *                 type: string
- *                 example: "2Yq4Z5Q7X1x3Y4z5Q7x"
- *                 description: Link to join the group
- *               description:
- *                type: string
- *                example: "description example"
- *                description: Description of the group
- *               groupPicture:
- *                type: string
- *                example: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fgroup%2520of%2520people%2F&psig=AOvVaw0QZ4Z3Z2Z2Z2Z2Z2Z2Z2Z2&ust=" 
- *  
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   example: "name"
+ *                   description: Name of the group
+ *                 inviteLink:
+ *                   type: string
+ *                   example: "2Yq4Z5Q7X1x3Y4z5Q7x"
+ *                   description: Link to join the group
+ *                 description:
+ *                   type: string
+ *                   example: "description example"
+ *                   description: Description of the group
+ *                 groupPicture:
+ *                   type: string
+ *                   example: "https://example.com/new-group-picture.jpg"
+ *
  *       500:
  *         description: Internal server error
  *         content:
@@ -87,8 +96,212 @@ const router = express.Router();
  *                   example: "Internal server error"
  */
 router.post("/createGroup", validateToken, createGroup);
+
+/* UPDATE */
+
+/**
+ * @swagger
+ * /api/v1/groups/joinGroup:
+ *   put:
+ *     summary: Join a group
+ *     description: Join a group using the invite link
+ *     tags:
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: inviteLink
+ *         description: Invite link to join the group
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - inviteLink
+ *             properties:
+ *               inviteLink:
+ *                 type: string
+ *                 example: "2Yq4Z5Q7X1x3Y4z5Q7x"
+ *                 description: Invite link to join the group
+ *     responses:
+ *       200:
+ *         description: Group joined successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 group:
+ *                   $ref: '#/components/schemas/Group'
+ *       400:
+ *         description: User is already a member of the group or invalid invite link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User already a member of the group or invalid invite link"
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Group not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 router.put("/joinGroup", validateToken, joinGroup);
+
+/**
+ * @swagger
+ * /api/v1/groups/{groupId}/updateGroup:
+ *   put:
+ *     summary: Update a group
+ *     description: Update the name, description, and group picture of a group
+ *     tags:
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     consumes:
+ *      - application/json
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         type: string
+ *         description: The ID of the group to update
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "New Group Name"
+ *                 description: The updated name of the group
+ *               description:
+ *                 type: string
+ *                 example: "New group description"
+ *                 description: The updated description of the group
+ *               groupPicture:
+ *                 type: string
+ *                 example: "https://example.com/new-group-picture.jpg"
+ *                 description: The updated URL of the group picture
+ *     responses:
+ *       200:
+ *         description: Group updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 group:
+ *                   $ref: '#/components/schemas/Group'
+ *       401:
+ *         description: User is not a member of the group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User is not a member of the group"
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Group not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 router.put("/:groupId/updateGroup", validateToken, updateGroup);
+
+/**
+ * @swagger
+ * /api/v1/groups/{groupId}/leaveGroup:
+ *   put:
+ *     summary: Leave a group
+ *     description: Leave a group
+ *     tags:
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the group to leave
+ *     responses:
+ *       200:
+ *         description: Group left successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 group:
+ *                   $ref: '#/components/schemas/Group'
+ *       400:
+ *         description: User is not a member of the group
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ */
 router.put("/:groupId/leaveGroup", validateToken, leaveGroup);
 
 export default router;
