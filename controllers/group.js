@@ -1,5 +1,6 @@
 import Group from "../models/group.js";
 import User from "../models/user.js";
+import Outgoing from '../models/outgoing.js';
 import jwt from "jsonwebtoken";
 
 /*FUNZIONE CHE GENERA UN LINK D'INVITO UNIVOCO*/
@@ -22,6 +23,19 @@ export const getGroup = async (req, res) => {
       res.status(404).send("Group not found");
       return;
     }
+    // Verifica se l'utente che fa la richiesta è membro del gruppo
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
+      token = token.slice(7, token.length);
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+    if (!group.members.includes(userId)) {  //sta cosa non funziona
+      return res
+        .status(403)
+        .json({ message: "L'utente non è membro del gruppo." });
+    }
+
     res.status(200).json(group);
   } catch (error) {
     console.error(error);
@@ -35,7 +49,7 @@ export const getGroupUsers = async (req, res) => {
     const { groupId } = req.params;
 
     // Trova il gruppo nel database con l'ID specificato
-    const group = await Group.findById(groupId).populate("members");
+    const group = await Group.findById(groupId);
 
     // Verifica se l'utente che fa la richiesta è membro del gruppo
     let token = req.header("x-auth-token");
@@ -64,7 +78,7 @@ export const getGroupOutgoings = async (req, res) => {
     const { groupId } = req.params;
 
     // Trova il gruppo nel database con l'ID specificato
-    const group = await Group.findById(groupId).populate("outgoings");
+    const group = await Group.findById(groupId);
 
     // Verifica se l'utente che fa la richiesta è membro del gruppo
     let token = req.header("x-auth-token");
@@ -73,11 +87,12 @@ export const getGroupOutgoings = async (req, res) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
-    if (!group.members.includes(userId)) {
+    if (!group.members.includes(userId)) { // da capire come mai non va il not
       return res
         .status(403)
         .json({ message: "L'utente non è membro del gruppo." });
     }
+
     //restituisci le spese del gruppo come risposta
     res.status(201).json({ outgoings: group.outgoings });
   } catch (error) {
@@ -224,7 +239,6 @@ export const leaveGroup = async (req, res) => {
 
     // Rimuovi l'utente dal gruppo
     group.members.pull(userId);
-    await group.save();
 
     /*// Verifica se il gruppo è rimasto senza utenti
     if (group.members.length === 0) {
@@ -241,7 +255,7 @@ export const leaveGroup = async (req, res) => {
       await Group.findByIdAndDelete(groupId);
     }*/ //attenzione che diventa una delete e non più una put
 
-    //await group.save();
+    await group.save();
     res.json({ group });
   } catch (error) {
     console.error(error);

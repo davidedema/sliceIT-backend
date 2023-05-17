@@ -20,7 +20,7 @@ const router = express.Router();
  */
 
 /* READ */
-router.get("/:groupId/group", validateToken, getGroup);
+router.get("/:groupId", validateToken, getGroup);
 router.get("/:groupId/users", validateToken, getGroupUsers);
 router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
 
