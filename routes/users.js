@@ -64,18 +64,18 @@ const router = express.Router();
  *                     type: object
  *                     properties:
  *                       id:
- *                       type: string
- *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                       description: Id of the group
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the group
  *                 outgoings: 
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       id:
- *                       type: string
- *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                       description: Id of the outgoing                 
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the outgoing                 
  *       401:
  *         description: Unauthorized
  *         content:
@@ -231,7 +231,7 @@ router.get("/:id/groups", validateToken, getUserGroups);
  *         type: string
  *         description: Id of the user
  *         required: true
- * 
+ *     
  *     responses:
  *       200:
  *         description: User found, return the outgoings
@@ -330,7 +330,7 @@ router.get("/:id/outgoings", validateToken, getUserOutgoings);
  *     summary: Modify an existing user
  *     description: Modify an existing user, with the specified data.
  *     tags:
- *       - Users 
+ *       - Users
  *     produces:
  *       - application/json
  *     security:
@@ -341,50 +341,50 @@ router.get("/:id/outgoings", validateToken, getUserOutgoings);
  *       - in: path
  *         name: id
  *         type: string
- *         description: The ID of the user to edit. 
+ *         description: The ID of the user to edit.
  *     requestBody:
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *                 email:
- *                   type: string
- *                   example: "exampleATexample.com"      
- *                   description: Email of the user
- *                 password:
- *                   type: string
- *                   format: password
- *                   example: "password"
- *                   description: Password of the user
- *                 nickname:
- *                   type: string
- *                   example: "nickname"
- *                 firstName:
- *                   type: string
- *                   example: "name"
- *                 lastName:
- *                   type: string
- *                   example: "surname"
- *                 groups:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
+ *               email:
+ *                 type: string
+ *                 example: "exampleATexample.com"
+ *                 description: Email of the user
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "password"
+ *                 description: Password of the user
+ *               nickname:
+ *                 type: string
+ *                 example: "nickname"
+ *               firstName:
+ *                 type: string
+ *                 example: "name"
+ *               lastName:
+ *                 type: string
+ *                 example: "surname"
+ *               groups:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
  *                       type: string
  *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
  *                       description: Id of the group
- *                 outgoings: 
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
+ *               outgoings:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
  *                       type: string
  *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                       description: Id of the outgoing  
- *     
+ *                       description: Id of the outgoing
+ *
  *     responses:
  *       200:
  *         description: Returns the newly created user id.
@@ -395,7 +395,7 @@ router.get("/:id/outgoings", validateToken, getUserOutgoings);
  *               properties:
  *                 email:
  *                   type: string
- *                   example: "exampleATexample.com"      
+ *                   example: "exampleATexample.com"
  *                   description: Email of the user
  *                 password:
  *                   type: string
@@ -417,18 +417,18 @@ router.get("/:id/outgoings", validateToken, getUserOutgoings);
  *                     type: object
  *                     properties:
  *                       id:
- *                       type: string
- *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                       description: Id of the group
- *                 outgoings: 
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the group
+ *                 outgoings:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       id:
- *                       type: string
- *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                       description: Id of the outgoing  
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the outgoing
  *       400:
  *         description: Already existing user
  *         content:
