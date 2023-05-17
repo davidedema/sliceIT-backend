@@ -13,6 +13,79 @@ function generateInviteLink() {
   return inviteLink;
 }
 
+/*RESTITUIRE UN GRUPPO*/
+export const getGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const group = await Group.findById(groupId);
+    if (!group) {
+      res.status(404).send("Group not found");
+      return;
+    }
+    res.status(200).json(group);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+/*RESTITUIRE GLI UTENTI DI UN GRUPPO*/
+export const getGroupUsers = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    // Trova il gruppo nel database con l'ID specificato
+    const group = await Group.findById(groupId).populate("members");
+
+    // Verifica se l'utente che fa la richiesta è membro del gruppo
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
+      token = token.slice(7, token.length);
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+    if (!group.members.includes(userId)) {
+      return res
+        .status(403)
+        .json({ message: "L'utente non è membro del gruppo." });
+    }
+
+    // Restituisci gli utenti del gruppo come risposta
+    res.status(201).json({ users: group.members });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+/*RESTITUIRE LE SPESE DI UN GRUPPO*/
+export const getGroupOutgoings = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+
+    // Trova il gruppo nel database con l'ID specificato
+    const group = await Group.findById(groupId).populate("outgoings");
+
+    // Verifica se l'utente che fa la richiesta è membro del gruppo
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
+      token = token.slice(7, token.length);
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+    if (!group.members.includes(userId)) {
+      return res
+        .status(403)
+        .json({ message: "L'utente non è membro del gruppo." });
+    }
+    //restituisci le spese del gruppo come risposta
+    res.status(201).json({ outgoings: group.outgoings });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error");
+  }
+};
+
 /*CREARE UN GRUPPO*/
 export const createGroup = async (req, res) => {
   try {
@@ -23,8 +96,8 @@ export const createGroup = async (req, res) => {
     await group.save();
 
     // Aggiungi il gruppo all'utente corrente
-    let token = req.header('x-auth-token');
-    if(token.startsWith('Bearer ')) {
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
       token = token.slice(7, token.length);
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -48,7 +121,7 @@ export const createGroup = async (req, res) => {
 export const joinGroup = async (req, res) => {
   try {
     const { inviteLink } = req.body;
-    console.log(inviteLink)
+    console.log(inviteLink);
 
     const group = await Group.findOne({ inviteLink });
     if (!group) {
@@ -56,13 +129,12 @@ export const joinGroup = async (req, res) => {
       return;
     }
 
-    let token = req.header('x-auth-token');
-    if(token.startsWith('Bearer ')) {
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
       token = token.slice(7, token.length);
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
-    
 
     if (group.members.includes(userId)) {
       res.status(400).send("User already a member of the group");
@@ -92,8 +164,8 @@ export const updateGroup = async (req, res) => {
     const { name, description, groupPicture } = req.body;
 
     // id utente
-    let token = req.header('x-auth-token');
-    if(token.startsWith('Bearer ')) {
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
       token = token.slice(7, token.length);
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -104,17 +176,17 @@ export const updateGroup = async (req, res) => {
       res.status(401).send("User is not a member of the group");
       return;
     }
-    
+
     const group = await Group.findByIdAndUpdate(
       groupId,
       { name, description, groupPicture },
       { new: true }
-      );
-      if (!group) {
-        res.status(404).send("Group not found");
-        return;
-      }
-      
+    );
+    if (!group) {
+      res.status(404).send("Group not found");
+      return;
+    }
+
     res.json({ group });
   } catch (error) {
     console.error(error);
@@ -134,8 +206,8 @@ export const leaveGroup = async (req, res) => {
     }
 
     // id utente
-    let token = req.header('x-auth-token');
-    if(token.startsWith('Bearer ')) {
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
       token = token.slice(7, token.length);
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -153,13 +225,26 @@ export const leaveGroup = async (req, res) => {
     // Rimuovi l'utente dal gruppo
     group.members.pull(userId);
     await group.save();
-    
 
-      //await group.save();
-      res.json({ group });
+    /*// Verifica se il gruppo è rimasto senza utenti
+    if (group.members.length === 0) {
+      // Trova tutte le spese associate al gruppo
+      const expenses = await Expense.find({ group: groupId });
+
+      // Rimuovi il riferimento al gruppo da tutte le spese
+      for (const expense of expenses) {
+        expense.group = null;
+        await expense.save();
+      }
+
+      // Elimina il gruppo
+      await Group.findByIdAndDelete(groupId);
+    }*/ //attenzione che diventa una delete e non più una put
+
+    //await group.save();
+    res.json({ group });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");
   }
 };
-
