@@ -20,8 +20,237 @@ const router = express.Router();
  */
 
 /* READ */
+
+/**
+ * @swagger
+ * /api/v1/groups/:groupId:
+ *   get:
+ *     summary: Get a group by id
+ *     description: Get a group by id
+ *     tags: 
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the group
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: Group found, return it
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   example: "name"
+ *                   description: Name of the group
+ *                 inviteLink:
+ *                   type: string
+ *                   example: "2Yq4Z5Q7X1x3Y4z5Q7x"
+ *                   description: Link to join the group
+ *                 description:
+ *                   type: string
+ *                   example: "description example"
+ *                   description: Description of the group
+ *                 groupPicture:
+ *                   type: string
+ *                   example: "https://example.com/new-group-picture.jpg"
+ *                   description: Link to the group picture
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                       type: string
+ *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                       description: Id of the user
+ *                 outgoings: 
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                       type: string
+ *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                       description: Id of the outgoing                 
+ *       403:
+ *         description: Forbidden, user is not a member of the group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "L'utente non è membro del gruppo."
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Group not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
 router.get("/:groupId", validateToken, getGroup);
+
+/**
+ * @swagger
+ * /api/v1/groups/:groupId/users:
+ *   get:
+ *     summary: Get the group users by it's id
+ *     description: Get the group users by it's id
+ *     tags: 
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the group
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: Group found, return the users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                       type: string
+ *                       example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                       description: Id of the user                
+ *       403:
+ *         description: Forbidden, user is not a member of the group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "L'utente non è membro del gruppo."
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Group not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
 router.get("/:groupId/users", validateToken, getGroupUsers);
+
+/**
+ * @swagger
+ * /api/v1/groups/:groupId/outgoings:
+ *   get:
+ *     summary: Get the group users by it's id
+ *     description: Get the group users by it's id
+ *     tags: 
+ *       - Groups
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the group
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: Group found, return the users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 outgoings:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                         description: Id of the group
+ *       403:
+ *         description: Forbidden, user is not a member of the group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "L'utente non è membro del gruppo."
+ *       404:
+ *         description: Group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Group not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
 router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
 
 /* POST */
