@@ -12,6 +12,9 @@ export const registerUser = async (req, res) => {
             name,
             surname
         } = req.body;
+
+        if (!email || !nickname || !password)
+            return res.status(400).json({ message: "Missing required fields" });
         
         console.log(email, nickname, password, name, surname);
         // Check se mail è già presente nel db
