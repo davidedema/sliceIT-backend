@@ -35,7 +35,7 @@ const router = express.Router();
  *       - jwt: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: groupId
  *         type: string
  *         description: Id of the group
  *         required: true
