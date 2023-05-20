@@ -12,6 +12,9 @@ export const registerUser = async (req, res) => {
             name,
             surname
         } = req.body;
+
+        if (!email || !nickname || !password)
+            return res.status(400).json({ message: "Missing required fields" });
         
         console.log(email, nickname, password, name, surname);
         // Check se mail è già presente nel db
@@ -44,7 +47,10 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password);
+
+        if (!email || !password ) 
+            return res.status(400).json({ message: "Invalid credentials" });
+
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "Email doesn't exists" });
 
@@ -52,7 +58,7 @@ export const loginUser = async (req, res) => {
         if ( !isMatch) return res.status(400).json({ message: "Invalid credentials" });
         
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        delete user.password;
+        user.password = undefined;
         res.status(200).json({ user, token });
     } catch (error) {
         res.status(500).json({ message: error.message });
