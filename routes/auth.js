@@ -76,19 +76,7 @@ const router = express.Router();
  *                 message:
  *                   type: string
  *                   example: "Email already exists"
- *                   description: Email of the user already exists
- *       
- *       400: 
- *         description: Bad request, missing required fields
- *         content:
- *           application/json:
- *             schema:
- *             type: object
- *             properties:
- *               message:
- *                 type: string
- *                 example: "Missing required fields"
- *                 description: Missing required fields        
+ *                   description: Email of the user already exists       
  *       500:
  *         description: Internal server error
  *         content:
