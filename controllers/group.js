@@ -30,7 +30,7 @@ export const getGroup = async (req, res) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
-    if (!group.members.includes(userId)) {  //sta cosa non funziona
+    if (!group.members.includes(userId)) {
       return res
         .status(403)
         .json({ message: "L'utente non è membro del gruppo." });
@@ -87,7 +87,7 @@ export const getGroupOutgoings = async (req, res) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
-    if (!group.members.includes(userId)) { // da capire come mai non va il not
+    if (!group.members.includes(userId)) { 
       return res
         .status(403)
         .json({ message: "L'utente non è membro del gruppo." });
