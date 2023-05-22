@@ -20,7 +20,7 @@ export const getGroup = async (req, res) => {
     const { groupId } = req.params;
     const group = await Group.findById(groupId);
     if (!group) {
-      res.status(404).send("Group not found");
+      res.status(404).json("Group not found");
       return;
     }
     // Verifica se l'utente che fa la richiesta è membro del gruppo
@@ -39,7 +39,7 @@ export const getGroup = async (req, res) => {
     res.status(200).json(group);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -68,7 +68,7 @@ export const getGroupUsers = async (req, res) => {
     res.status(201).json({ users: group.members });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -97,7 +97,7 @@ export const getGroupOutgoings = async (req, res) => {
     res.status(201).json({ outgoings: group.outgoings });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -128,7 +128,7 @@ export const createGroup = async (req, res) => {
     res.status(201).json({ group });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -140,7 +140,7 @@ export const joinGroup = async (req, res) => {
 
     const group = await Group.findOne({ inviteLink });
     if (!group) {
-      res.status(404).send("Group not found");
+      res.status(404).json("Group not found");
       return;
     }
 
@@ -152,7 +152,7 @@ export const joinGroup = async (req, res) => {
     const userId = decoded.id;
 
     if (group.members.includes(userId)) {
-      res.status(400).send("User already a member of the group");
+      res.status(400).json("User already a member of the group");
       return;
     }
 
@@ -168,7 +168,7 @@ export const joinGroup = async (req, res) => {
     res.json({ group });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -188,7 +188,7 @@ export const updateGroup = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user.groups.includes(groupId)) {
-      res.status(401).send("User is not a member of the group");
+      res.status(401).json("User is not a member of the group");
       return;
     }
 
@@ -198,14 +198,14 @@ export const updateGroup = async (req, res) => {
       { new: true }
     );
     if (!group) {
-      res.status(404).send("Group not found");
+      res.status(404).json("Group not found");
       return;
     }
 
     res.json({ group });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
 
@@ -216,7 +216,7 @@ export const leaveGroup = async (req, res) => {
 
     const group = await Group.findById(groupId);
     if (!group) {
-      res.status(404).send("Group not found");
+      res.status(404).json("Group not found");
       return;
     }
 
@@ -228,7 +228,7 @@ export const leaveGroup = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
     if (!group.members.includes(userId)) {
-      res.status(400).send("User is not a member of the group");
+      res.status(400).json("User is not a member of the group");
       return;
     }
 
@@ -259,6 +259,6 @@ export const leaveGroup = async (req, res) => {
     res.json({ group });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal server error");
+    res.status(500).json("Internal server error");
   }
 };
