@@ -33,6 +33,7 @@ app.use(cors());
 /* ROUTES */
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/groups", groupRoutes);
 
 /* SWAGGER */
 const swaggerOptions = {
@@ -71,7 +72,6 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-app.use("/api/v1/groups", groupRoutes);
 
 /* MOONGOSE */
 const PORT = process.env.PORT || 8080;
