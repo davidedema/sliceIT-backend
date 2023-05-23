@@ -19,6 +19,7 @@ const outgoingSchema = new mongoose.Schema(
     paidBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     users: [
       {
@@ -36,6 +37,7 @@ const outgoingSchema = new mongoose.Schema(
     group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
+      required: true,
     },
     periodicity: {
       isPeriodic: {
