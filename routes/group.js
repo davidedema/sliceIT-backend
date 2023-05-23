@@ -257,7 +257,7 @@ router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
 
 /**
  * @swagger
- * /api/v1/groups/createGroup:
+ * /api/v1/groups:
  *   post:
  *     summary: Create a new group
  *     description: Create a new group
@@ -335,13 +335,13 @@ router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
  *                   type: string
  *                   example: "Internal server error"
  */
-router.post("/createGroup", validateToken, createGroup);
+router.post("/", validateToken, createGroup);
 
 /* UPDATE */
 
 /**
  * @swagger
- * /api/v1/groups/joinGroup:
+ * /api/v1/groups/join-group:
  *   put:
  *     summary: Join a group
  *     description: Join a group using the invite link
@@ -438,11 +438,11 @@ router.post("/createGroup", validateToken, createGroup);
  *                   type: string
  *                   example: "Internal server error"
  */
-router.put("/joinGroup", validateToken, joinGroup);
+router.put("/join-group", validateToken, joinGroup);
 
 /**
  * @swagger
- * /api/v1/groups/:groupId/updateGroup:
+ * /api/v1/groups/:groupId:
  *   put:
  *     summary: Update a group
  *     description: Update the name, description, and group picture of a group
@@ -550,11 +550,11 @@ router.put("/joinGroup", validateToken, joinGroup);
  *                   type: string
  *                   example: "Internal server error"
  */
-router.put("/:groupId/updateGroup", validateToken, updateGroup);
+router.put("/:groupId", validateToken, updateGroup);
 
 /**
  * @swagger
- * /api/v1/groups/:groupId/leaveGroup:
+ * /api/v1/groups/:groupId/leave-group:
  *   put:
  *     summary: Leave a group
  *     description: Leave a group
@@ -641,6 +641,6 @@ router.put("/:groupId/updateGroup", validateToken, updateGroup);
  *                   type: string
  *                   example: "Internal server error"
  */
-router.put("/:groupId/leaveGroup", validateToken, leaveGroup);
+router.put("/:groupId/leave-group", validateToken, leaveGroup);
 
 export default router;
