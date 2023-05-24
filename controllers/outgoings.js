@@ -1,6 +1,8 @@
 import Group from "../models/group.js";
 import User from "../models/user.js";
 import Outgoing from '../models/outgoing.js';
+import User from "../models/user.js";
+import Group from "../models/group.js";
 import jwt from "jsonwebtoken";
 
 async function isInGroup(user, group, token) {
@@ -60,17 +62,14 @@ export const createOutgoing = async (req, res) => {
                 return res.status(400).json({ message: "User not in group" });
         }
 
-        await fetch('http://localhost:3001/api/v1/users/' + paidBy, {
-            method: 'PUT',
-            headers: {
-                'x-auth-token': token,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
-        })
-
-
-
+        // aggiorno utente e gruppo
+        // ? non posso fare cosi vero
+        const gruppo = Group.findById(group);
+        gruppo.outgoings.push(newOutgoing._id);
+        gruppo.save();
+        const utente = User.findById(paidBy);
+        utente.outgoings.push(newOutgoing._id);
+        utente.save();
 
         const newOutgoing = new Outgoing({
             name,
