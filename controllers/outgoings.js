@@ -1,8 +1,6 @@
 import Group from "../models/group.js";
 import User from "../models/user.js";
 import Outgoing from '../models/outgoing.js';
-import User from "../models/user.js";
-import Group from "../models/group.js";
 import jwt from "jsonwebtoken";
 
 async function isInGroup(user, group, token) {
@@ -15,12 +13,13 @@ async function isInGroup(user, group, token) {
     const gruppiJson = await gruppi.json();
     for (let i = 0; i < gruppiJson.length; i++) {
         if (gruppiJson[i]._id == group)
-        return true;
+            return true;
     }
     return false;
 }
 
 // todo controllo utenti duplicati, aggiungere spesa a gruppo e utente
+// ! capire come fare controllo gruppi
 // ? COME AGGIORNO UTENTI
 export const createOutgoing = async (req, res) => {
     try {
@@ -35,7 +34,7 @@ export const createOutgoing = async (req, res) => {
             tag,
         } = req.body;
 
-        let token = req.header("x-auth-token");     
+        let token = req.header("x-auth-token");
 
         if (!name || !value || !paidBy || !users || !group || !periodicity)
             return res.status(400).json({ message: "Missing required fields" });
@@ -54,22 +53,14 @@ export const createOutgoing = async (req, res) => {
         if (value < 0)
             return res.status(400).json({ message: "Value cannot be negative" });
 
-        if (! await isInGroup(paidBy, group, token))
-            return res.status(400).json({ message: "User not in group" });
-        
-        for (let i = 0; i < users.length; i++) {
+        /* if (! await isInGroup(paidBy, group, token))
+            return res.status(400).json({ message: "User not in group" }); */
+
+        /* for (let i = 0; i < users.length; i++) {
             if (! await isInGroup(users[i].user, group, token))
                 return res.status(400).json({ message: "User not in group" });
-        }
+        } */
 
-        // aggiorno utente e gruppo
-        // ? non posso fare cosi vero
-        const gruppo = Group.findById(group);
-        gruppo.outgoings.push(newOutgoing._id);
-        gruppo.save();
-        const utente = User.findById(paidBy);
-        utente.outgoings.push(newOutgoing._id);
-        utente.save();
 
         const newOutgoing = new Outgoing({
             name,
@@ -82,6 +73,21 @@ export const createOutgoing = async (req, res) => {
             tag,
         });
         const savedOutgoing = await newOutgoing.save();
+        // aggiorno utente e gruppo
+        // ? non posso fare cosi vero
+        
+        const gruppo = await Group.findById(group);
+        gruppo.outgoings.push(savedOutgoing._id);
+        gruppo.save();
+
+        const utente = await User.findById(paidBy);
+        utente.outgoings.push(savedOutgoing._id);
+        utente.save();
+        for (let i = 0; i < users.length; i++) {
+            let utente = await User.findById(users[i].user);
+            utente.outgoings.push(savedOutgoing._id);
+            utente.save();
+        }
         res.status(201).json(savedOutgoing);
     } catch (error) {
         res.status(500).json({ message: error.message });
