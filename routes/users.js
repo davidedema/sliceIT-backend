@@ -76,6 +76,16 @@ const router = express.Router();
  *                         type: string
  *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
  *                         description: Id of the outgoing                 
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Missing required fields" 
  *       401:
  *         description: Unauthorized
  *         content:
@@ -86,6 +96,7 @@ const router = express.Router();
  *                 message:
  *                   type: string
  *                   example: "Not authorized"
+ *
  *       404:
  *         description: User not found
  *         content:

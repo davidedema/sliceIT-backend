@@ -8,6 +8,9 @@ export const getUser = async (req, res) => {
     try {
         const { id } = req.params;
         try {
+            // se id non esistente
+            if (!id) return res.status(400).json({ message: "Missing required fields" });
+            // cerco user con id
             const user = await User.findById(id);
             user.password = undefined;
             res.status(200).json(user);
