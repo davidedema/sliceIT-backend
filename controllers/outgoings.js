@@ -23,8 +23,9 @@ async function getUser(userid, token) {
             'x-auth-token': token,
         },
     });
-    const userJson = await user.json();
-    return userJson;
+    if (user.status == 200)
+        return true;
+    return false;
 }
 
 // todo controllo utenti duplicati, aggiungere spesa a gruppo e utente
@@ -70,11 +71,11 @@ export const createOutgoing = async (req, res) => {
         if (! await Group.findById(group))
             return res.status(400).json({ message: "Group not found" });
 
-        if (! await User.findById(paidBy))
+        if (! await getUser(paidBy, token))
             return res.status(400).json({ message: "User not found" });
 
         for (let i = 0; i < users.length; i++) {
-            if (! await User.findById(users[i].user))
+            if (! await getUser(users[i].user, token))
                 return res.status(400).json({ message: "User not found" });
         }
 
