@@ -30,10 +30,15 @@ export const getUserGroups = async (req, res) => {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
+        // se chi ha fatto la richiesta non corrisponde all'utente cercato
         if (verified.id !== id)
             return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
         const groups = await Group.find({ _id: { $in: user.groups } });
+        if (!groups)
+            return res.status(404).json({ message: 'Groups not found' });
         res.status(200).json(groups);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -48,10 +53,15 @@ export const getUserOutgoings = async (req, res) => {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
+        // se chi ha fatto la richiesta non corrisponde all'utente cercato
         if (verified.id !== id)
             return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
         const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
+        if (!outgoings)
+            return res.status(404).json({ message: 'Outgoings not found' });
         res.status(200).json(outgoings);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -72,6 +82,7 @@ export const updateUser = async (req, res) => {
         if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
+        // se chi ha fatto la richiesta non corrisponde all'utente cercato
         const verified = jwt.verify(token, process.env.JWT_SECRET);
         if (verified.id !== id)
             return res.status(401).json({ message: 'Not authorized' });

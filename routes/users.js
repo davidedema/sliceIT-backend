@@ -202,7 +202,7 @@ router.get("/:id", validateToken, getUser);
  *                   type: string
  *                   example: "Not authorized"
  *       404:
- *         description: User not found
+ *         description: User not found or groups not found
  *         content:
  *           application/json:
  *             schema:
@@ -310,7 +310,7 @@ router.get("/:id/groups", validateToken, getUserGroups);
  *                   type: string
  *                   example: "Not authorized"
  *       404:
- *         description: User not found
+ *         description: User not found or outgoings not found
  *         content:
  *           application/json:
  *             schema:
