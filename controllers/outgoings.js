@@ -4,23 +4,31 @@ import Outgoing from '../models/outgoing.js';
 import jwt from "jsonwebtoken";
 
 async function isInGroup(user, group, token) {
-    const gruppi = await fetch('http://localhost:3001/api/v1/users/' + user + '/groups', {
+    const gruppi = await fetch('http://localhost:3001/api/v1/groups/' + group +'/', {
         method: 'GET',
         headers: {
             'x-auth-token': token,
         },
     });
-    const gruppiJson = await gruppi.json();
-    for (let i = 0; i < gruppiJson.length; i++) {
-        if (gruppiJson[i]._id == group)
-            return true;
-    }
+    const gruppoJson = await gruppi.json();
+    if (gruppoJson.members.includes(user))
+        return true;
     return false;
 }
 
+async function getUser(userid, token) {
+    const user = await fetch('http://localhost:3001/api/v1/users/' + userid +'/', {
+        method: 'GET',
+        headers: {
+            'x-auth-token': token,
+        },
+    });
+    const userJson = await user.json();
+    return userJson;
+}
+
 // todo controllo utenti duplicati, aggiungere spesa a gruppo e utente
-// ! capire come fare controllo gruppi
-// ? COME AGGIORNO UTENTI
+
 export const createOutgoing = async (req, res) => {
     try {
         const {
@@ -38,6 +46,26 @@ export const createOutgoing = async (req, res) => {
 
         if (!name || !value || !paidBy || !users || !group || !periodicity)
             return res.status(400).json({ message: "Missing required fields" });
+        
+        //check if value is a number
+        if (isNaN(value))
+            return res.status(400).json({ message: "Value must be a number" });
+        if (value < 0)
+            return res.status(400).json({ message: "Value cannot be negative" });
+        for (let i = 0; i < users.length; i++) {
+            if (isNaN(users[i].value))
+                return res.status(400).json({ message: "Value must be a number" });
+            if (users[i].value < 0)
+                return res.status(400).json({ message: "Value cannot be negative" });
+        }
+
+        //check if periodicity is a number
+        if (periodicity.isPeriodic) {
+            if (isNaN(periodicity.period))
+                return res.status(400).json({ message: "Periodicity must be a number" });
+            if (periodicity.period <= 0)
+                return res.status(400).json({ message: "Periodicity must be positive" });
+        }
 
         if (! await Group.findById(group))
             return res.status(400).json({ message: "Group not found" });
@@ -50,16 +78,14 @@ export const createOutgoing = async (req, res) => {
                 return res.status(400).json({ message: "User not found" });
         }
 
-        if (value < 0)
-            return res.status(400).json({ message: "Value cannot be negative" });
+        //check if users is in group
+        if (! await isInGroup(paidBy, group, token))
+            return res.status(400).json({ message: "User not in group" }); 
 
-        /* if (! await isInGroup(paidBy, group, token))
-            return res.status(400).json({ message: "User not in group" }); */
-
-        /* for (let i = 0; i < users.length; i++) {
+        for (let i = 0; i < users.length; i++) {
             if (! await isInGroup(users[i].user, group, token))
                 return res.status(400).json({ message: "User not in group" });
-        } */
+        }
 
 
         const newOutgoing = new Outgoing({
@@ -73,6 +99,7 @@ export const createOutgoing = async (req, res) => {
             tag,
         });
         const savedOutgoing = await newOutgoing.save();
+
         // aggiorno utente e gruppo
         // ? non posso fare cosi vero
         
