@@ -28,7 +28,23 @@ async function getUser(userid, token) {
     return false;
 }
 
-// todo controllo utenti duplicati, aggiungere spesa a gruppo e utente
+function buyerInUsers(buyer, users) {
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].user == buyer)
+            return true;
+    }
+    return false;
+}
+
+function uniqueUsers(users) {
+    for (let i = 0; i < users.length; i++) {
+        for (let j = i + 1; j < users.length; j++) {
+            if (users[i].user == users[j].user)
+                return false;
+        }
+    }
+    return true;
+}
 
 export const createOutgoing = async (req, res) => {
     try {
@@ -88,6 +104,15 @@ export const createOutgoing = async (req, res) => {
                 return res.status(400).json({ message: "User not in group" });
         }
 
+        //check if paidBy is in users
+        if (buyerInUsers(paidBy, users))
+            return res.status(400).json({ message: "Buyer in users" });
+
+        //check if users are unique
+        if(!uniqueUsers(users))
+            return res.status(400).json({ message: "Users are not unique" });
+
+
 
         const newOutgoing = new Outgoing({
             name,
@@ -101,9 +126,6 @@ export const createOutgoing = async (req, res) => {
         });
         const savedOutgoing = await newOutgoing.save();
 
-        // aggiorno utente e gruppo
-        // ? non posso fare cosi vero
-        
         const gruppo = await Group.findById(group);
         gruppo.outgoings.push(savedOutgoing._id);
         gruppo.save();
