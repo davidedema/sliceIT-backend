@@ -96,14 +96,20 @@ export const updateUser = async (req, res) => {
         if (await User.findOne({ nickname: nickname }) && nickname !== user.nickname)
             return res.status(400).json({ message: 'Nickname already exists' });
 
-        const salt = await bcrypt.genSalt();
-        const passwordHash = await bcrypt.hash(password, salt);
-
-        user.email = email;
-        user.nickname = nickname;
-        user.password = passwordHash;
-        user.firstName = firstName;
-        user.lastName = lastName;
+        if (password) {
+            const salt = await bcrypt.genSalt();
+            const passwordHash = await bcrypt.hash(password, salt);
+        }
+        if (email)
+            user.email = email;
+        if (nickname)
+            user.nickname = nickname;
+        if (password)
+            user.password = passwordHash;
+        if (firstName)
+            user.firstName = firstName;
+        if (lastName)
+            user.lastName = lastName;
 
         try {
             await user.save();
