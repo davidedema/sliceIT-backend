@@ -100,15 +100,15 @@ export const updateUser = async (req, res) => {
             const salt = await bcrypt.genSalt();
             const passwordHash = await bcrypt.hash(password, salt);
         }
-        if (email)
+        if (email !== undefined)
             user.email = email;
-        if (nickname)
+        if (nickname !== undefined)
             user.nickname = nickname;
-        if (password)
+        if (password !== undefined)
             user.password = passwordHash;
-        if (firstName)
+        if (firstName !== undefined)
             user.firstName = firstName;
-        if (lastName)
+        if (lastName !== undefined)
             user.lastName = lastName;
 
         try {
