@@ -65,7 +65,8 @@ export const getGroupUsers = async (req, res) => {
     }
 
     // Restituisci gli utenti del gruppo come risposta
-    res.status(201).json({ users: group.members });
+    const users = await Group.find({ _id: { $in: group.members} });
+    res.status(200).json(users);
   } catch (error) {
     console.error(error);
     res.status(500).json("Internal server error");
@@ -94,7 +95,8 @@ export const getGroupOutgoings = async (req, res) => {
     }
 
     //restituisci le spese del gruppo come risposta
-    res.status(201).json({ outgoings: group.outgoings });
+    const outgoings = await Group.find({ _id: { $in: group.outgoing} });
+    res.status(200).json(outgoings);
   } catch (error) {
     console.error(error);
     res.status(500).json("Internal server error");
