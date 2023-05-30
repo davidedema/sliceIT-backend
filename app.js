@@ -11,7 +11,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
-
+import outgoingsRoutes from './routes/outgoings.js';
 import groupRoutes from './routes/group.js';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -33,6 +33,8 @@ app.use(cors());
 /* ROUTES */
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/groups", groupRoutes);
+app.use("/api/v1/outgoings", outgoingsRoutes);
 
 /* SWAGGER */
 const swaggerOptions = {
@@ -71,7 +73,6 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-app.use("/api/v1/groups", groupRoutes);
 
 /* MOONGOSE */
 const PORT = process.env.PORT || 8080;

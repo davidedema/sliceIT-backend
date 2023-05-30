@@ -16,7 +16,6 @@ export const registerUser = async (req, res) => {
         if (!email || !nickname || !password)
             return res.status(400).json({ message: "Missing required fields" });
         
-        console.log(email, nickname, password, name, surname);
         // Check se mail è già presente nel db
         const existingEmail = await User.findOne({ email });
         if (existingEmail) return res.status(400).json({ message: "Email already exists" });
@@ -25,7 +24,7 @@ export const registerUser = async (req, res) => {
         const existingNick = await User.findOne({ nickname });
         if (existingNick) return res.status(400).json({ message: "Nickname already exists" });
 
-
+        
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
 

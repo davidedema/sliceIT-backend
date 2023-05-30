@@ -7,6 +7,11 @@ const outgoingSchema = new mongoose.Schema(
       required: true,
       max: 30,
     },
+    description: {
+      type: String,
+      default: "",
+      max: 200,
+    },
     value: {
       type: Number,
       required: true,
@@ -14,25 +19,35 @@ const outgoingSchema = new mongoose.Schema(
     paidBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      
+      required: true,
     },
-    loanedTo:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
+    users: [
+      {
+        user:{
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        value: {
+          type: Number,
+          required: true,
+        }
+      }
+    ],
     group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group",
+      required: true,
     },
-    description: {
-      type: String,
-      default: "",
-      max: 200,
-    },
-    isPeriodic: {
-      type: Boolean,
-      default: false,
+    periodicity: {
+      isPeriodic: {
+        type: Boolean,
+        default: false,
+      },
+      days: {
+        type: Number,
+        default: 0,
+      },
     },
     tag: {
       type: String,
