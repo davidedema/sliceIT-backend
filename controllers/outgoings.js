@@ -4,7 +4,7 @@ import Outgoing from '../models/outgoing.js';
 import jwt from "jsonwebtoken";
 
 async function isInGroup(user, group, token) {
-    const gruppi = await fetch('http://localhost:3001/api/v1/groups/' + group +'/', {
+    const gruppi = await fetch('http://localhost:3001/api/v1/groups/' + group + '/', {
         method: 'GET',
         headers: {
             'x-auth-token': token,
@@ -17,13 +17,25 @@ async function isInGroup(user, group, token) {
 }
 
 async function getUser(userid, token) {
-    const user = await fetch('http://localhost:3001/api/v1/users/' + userid +'/', {
+    const user = await fetch('http://localhost:3001/api/v1/users/' + userid + '/', {
         method: 'GET',
         headers: {
             'x-auth-token': token,
         },
     });
     if (user.status == 200)
+        return true;
+    return false;
+}
+
+async function getGroup(groupid, token) {
+    const group = await fetch('http://localhost:3001/api/v1/groups/' + groupid + '/', {
+        method: 'GET',
+        headers: {
+            'x-auth-token': token,
+        },
+    });
+    if (group.status == 200)
         return true;
     return false;
 }
@@ -63,7 +75,7 @@ export const createOutgoing = async (req, res) => {
 
         if (!name || !value || !paidBy || !users || !group || !periodicity)
             return res.status(400).json({ message: "Missing required fields" });
-        
+
         //check if value is a number
         if (isNaN(value))
             return res.status(400).json({ message: "Value must be a number" });
@@ -84,24 +96,26 @@ export const createOutgoing = async (req, res) => {
                 return res.status(400).json({ message: "Periodicity must be positive" });
         }
 
-        if (! await Group.findById(group))
-            return res.status(400).json({ message: "Group not found" });
+
+        if (! await getGroup(group, token))
+            return res.status(404).json({ message: "Group not found" });
+
 
         if (! await getUser(paidBy, token))
-            return res.status(400).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
 
         for (let i = 0; i < users.length; i++) {
             if (! await getUser(users[i].user, token))
-                return res.status(400).json({ message: "User not found" });
+                return res.status(404).json({ message: "User not found" });
         }
 
         //check if users is in group
         if (! await isInGroup(paidBy, group, token))
-            return res.status(400).json({ message: "User not in group" }); 
+            return res.status(404).json({ message: "User not in group" });
 
         for (let i = 0; i < users.length; i++) {
             if (! await isInGroup(users[i].user, group, token))
-                return res.status(400).json({ message: "User not in group" });
+                return res.status(404).json({ message: "User not in group" });
         }
 
         //check if paidBy is in users
@@ -109,7 +123,7 @@ export const createOutgoing = async (req, res) => {
             return res.status(400).json({ message: "Buyer in users" });
 
         //check if users are unique
-        if(!uniqueUsers(users))
+        if (!uniqueUsers(users))
             return res.status(400).json({ message: "Users are not unique" });
 
 
@@ -125,6 +139,7 @@ export const createOutgoing = async (req, res) => {
             tag,
         });
         const savedOutgoing = await newOutgoing.save();
+
 
         const gruppo = await Group.findById(group);
         gruppo.outgoings.push(savedOutgoing._id);
