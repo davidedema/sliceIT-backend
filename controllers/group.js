@@ -18,25 +18,27 @@ function generateInviteLink() {
 export const getGroup = async (req, res) => {
     try {
         const { groupId } = req.params;
-        const group = await Group.findById(groupId);
-        if (!group) {
+        try {
+            // Trova il gruppo nel database con l'ID specificato
+            const group = await Group.findById(groupId);
+
+            // Verifica se l'utente che fa la richiesta è membro del gruppo
+            let token = req.header("x-auth-token");
+            if (token.startsWith("Bearer ")) {
+                token = token.slice(7, token.length);
+            }
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decoded.id;
+            if (!group.members.includes(userId)) {
+                return res
+                    .status(403)
+                    .json({ message: "L'utente non è membro del gruppo." });
+            }
+            res.status(200).json(group);
+        } catch (error) {
             res.status(404).send("Group not found");
             return;
         }
-        // Verifica se l'utente che fa la richiesta è membro del gruppo
-        let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {
-            token = token.slice(7, token.length);
-        }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-        if (!group.members.includes(userId)) {
-            return res
-                .status(403)
-                .json({ message: "L'utente non è membro del gruppo." });
-        }
-
-        res.status(200).json(group);
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal server error");
@@ -47,26 +49,28 @@ export const getGroup = async (req, res) => {
 export const getGroupUsers = async (req, res) => {
     try {
         const { groupId } = req.params;
+        try {
+            // Trova il gruppo nel database con l'ID specificato
+            const group = await Group.findById(groupId);
 
-        // Trova il gruppo nel database con l'ID specificato
-        const group = await Group.findById(groupId);
-
-        // Verifica se l'utente che fa la richiesta è membro del gruppo
-        let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {
-            token = token.slice(7, token.length);
+            // Verifica se l'utente che fa la richiesta è membro del gruppo
+            let token = req.header("x-auth-token");
+            if (token.startsWith("Bearer ")) {
+                token = token.slice(7, token.length);
+            }
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decoded.id;
+            if (!group.members.includes(userId)) {
+                return res
+                    .status(403)
+                    .json({ message: "L'utente non è membro del gruppo." });
+            }
+            // Restituisci gli utenti del gruppo come risposta
+            const user = await User.find({ _id: { $in: group.members } });
+            res.status(200).json(user);
+        } catch (error) {
+            res.status(404).send("Group not found");
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-        if (!group.members.includes(userId)) {
-            return res
-                .status(403)
-                .json({ message: "L'utente non è membro del gruppo." });
-        }
-
-        // Restituisci gli utenti del gruppo come risposta
-        const user = await User.find({ _id: { $in: group.outgoings } });
-        res.status(200).json(user);
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal server error");
@@ -77,28 +81,32 @@ export const getGroupUsers = async (req, res) => {
 export const getGroupOutgoings = async (req, res) => {
     try {
         const { groupId } = req.params;
+        try {
+            // Trova il gruppo nel database con l'ID specificato
+            const group = await Group.findById(groupId);
 
-        // Trova il gruppo nel database con l'ID specificato
-        const group = await Group.findById(groupId);
+            // Verifica se l'utente che fa la richiesta è membro del gruppo
+            let token = req.header("x-auth-token");
+            if (token.startsWith("Bearer ")) {
+                token = token.slice(7, token.length);
+            }
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decoded.id;
+            if (!group.members.includes(userId)) {
+                return res
+                    .status(403)
+                    .json({ message: "L'utente non è membro del gruppo." });
+            }
 
-        // Verifica se l'utente che fa la richiesta è membro del gruppo
-        let token = req.header("x-auth-token");
-        if (token.startsWith("Bearer ")) {
-            token = token.slice(7, token.length);
+            //restituisci le spese del gruppo come risposta
+            const outgoings = await Outgoing.find({
+                _id: { $in: group.outgoings },
+            });
+            res.status(200).json(outgoings);
+        } catch (error) {
+            res.status(404).send("Group not found");
+            return;
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-        if (!group.members.includes(userId)) {
-            return res
-                .status(403)
-                .json({ message: "L'utente non è membro del gruppo." });
-        }
-
-        //restituisci le spese del gruppo come risposta
-        const outgoings = await Outgoing.find({
-            _id: { $in: group.outgoings },
-        });
-        res.status(200).json(outgoings);
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal server error");
