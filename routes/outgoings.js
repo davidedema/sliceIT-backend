@@ -147,7 +147,7 @@ const router = express.Router();
  *                   description: The tag of the outgoing
  *       
  *       400:
- *         description: Bad request, some of the required fields are missing, the value is not a number or the user is not in the group
+ *         description: Bad request, some of the required fields are missing, the value is not a number or the user is not in the group. In essence the outgoing is not valid.
  *         content:
  *           application/json:
  *             schema:
@@ -166,7 +166,17 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Not authorized"       
+ *                   example: "Not authorized"     
+ *       404:
+ *         description: User or group not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"    
  *       500:
  *         description: Internal server error
  *         content:
