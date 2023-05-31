@@ -189,10 +189,31 @@ export const updateOutgoing = async (req, res) => {
         if (description !== undefined)
             outgoing.description = description;
         if (value !== undefined) {
+            //check if value is a number and non negative
             if (isNaN(value))
                 return res.status(400).json({ message: "Value must be a number" });
             if (value < 0)
                 return res.status(400).json({ message: "Value cannot be negative" });
+            // check if value is greater than users value
+            if (users !== undefined) {
+                let total;
+                for (let i = 0; i < users.length; i++) {
+                    total = total + users[i].value;
+                    if (value < users[i].value)
+                        return res.status(400).json({ message: "Value cannot less than users value" });
+                }
+                if (value < total)
+                    return res.status(400).json({ message: "Value cannot less than users value" });
+            } else {
+                let total;
+                for (let i = 0; i < outgoing.users.length; i++) {
+                    total = total + outgoing.users[i].value;
+                    if (value < outgoing.users[i].value)
+                        return res.status(400).json({ message: "Value cannot less than users value" });
+                }
+                if (value < total)
+                    return res.status(400).json({ message: "Value cannot less than users value" });
+            }
             outgoing.value = value;
         }
         if (paidBy !== undefined) {
