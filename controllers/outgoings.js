@@ -126,7 +126,15 @@ export const createOutgoing = async (req, res) => {
         if (!uniqueUsers(users))
             return res.status(400).json({ message: "Users are not unique" });
 
-
+        // check if value is greater than users value
+        let total;
+        for (let i = 0; i < users.length; i++) {
+            total = total + users[i].value;
+            if (value < users[i].value)
+                return res.status(400).json({ message: "Value cannot less than users value" });
+        }
+        if (value < total)
+            return res.status(400).json({ message: "Value cannot less than users value" });
 
         const newOutgoing = new Outgoing({
             name,
