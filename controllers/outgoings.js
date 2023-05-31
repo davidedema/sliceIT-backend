@@ -158,3 +158,95 @@ export const createOutgoing = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const updateOutgoing = async (req, res) => {
+    const { id } = req.params;
+    const {
+        name,
+        description,
+        value,
+        paidBy,
+        users,
+        group,
+        periodicity,
+        tag,
+        isPaid,
+    } = req.body;
+
+    let token = req.header("x-auth-token");
+    if (token.startsWith("Bearer ")) {
+        token = token.slice(7, token.length).trimLeft();
+    }
+
+    //check if group exists
+    if (! await getGroup(group, token))
+        return res.status(404).json({ message: "Group not found" });
+
+    try {
+        const outgoing = await Outgoing.findById(id);
+        if (name !== undefined)
+            outgoing.name = name;
+        if (description !== undefined)
+            outgoing.description = description;
+        if (value !== undefined) {
+            if (isNaN(value))
+                return res.status(400).json({ message: "Value must be a number" });
+            if (value < 0)
+                return res.status(400).json({ message: "Value cannot be negative" });
+            outgoing.value = value;
+        }
+        if (paidBy !== undefined) {
+            //check if paidBy exists
+            if (! await getUser(paidBy, token))
+                return res.status(404).json({ message: "User not found" });
+            //check if users is in group
+            if (! await isInGroup(paidBy, group, token))
+                return res.status(404).json({ message: "User not in group" });
+            outgoing.paidBy = paidBy;
+        }
+        if (users !== undefined) {
+            //check if users exists
+            for (let i = 0; i < users.length; i++) {
+                if (! await getUser(users[i].user, token))
+                    return res.status(404).json({ message: "User not found" });
+            }
+
+            for (let i = 0; i < users.length; i++) {
+                if (! await isInGroup(users[i].user, group, token))
+                    return res.status(404).json({ message: "User not in group" });
+            }
+            //check if users are unique
+            if (!uniqueUsers(users))
+                return res.status(400).json({ message: "Users are not unique" });
+            for (let i = 0; i < users.length; i++) {
+                if (isNaN(users[i].value))
+                    return res.status(400).json({ message: "Value must be a number" });
+                if (users[i].value < 0)
+                    return res.status(400).json({ message: "Value cannot be negative" });
+            }
+            outgoing.users = users;
+        }
+        if (periodicity !== undefined) {
+            //check if periodicity is a number
+            if (periodicity.isPeriodic) {
+                if (isNaN(periodicity.period))
+                    return res.status(400).json({ message: "Periodicity must be a number" });
+                if (periodicity.period <= 0)
+                    return res.status(400).json({ message: "Periodicity must be positive" });
+            }
+            outgoing.periodicity = periodicity;
+        }
+        if (tag !== undefined)
+            outgoing.tag = tag;
+        if (isPaid !== undefined) {
+            //check if isPaid is a boolean
+            if (typeof isPaid !== "boolean")
+                return res.status(400).json({ message: "isPaid must be a boolean" });
+            outgoing.isPaid = isPaid;
+        }
+        const savedOutgoing = await outgoing.save();
+        res.status(200).json(savedOutgoing);
+    } catch (error) {
+        return res.status(404).json({ message: "Outgoing not found" });
+    }
+};

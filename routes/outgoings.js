@@ -1,6 +1,7 @@
 import express from "express";
 import {
     createOutgoing,
+    updateOutgoing,
 } from "../controllers/outgoings.js";
 import { validateToken } from "../middleware/auth.js";
 
@@ -178,5 +179,7 @@ const router = express.Router();
  *                   example: "Internal server error"  
  */
 router.post("/", validateToken, createOutgoing);
+
+router.put("/:id", validateToken, updateOutgoing);
 
 export default router;
