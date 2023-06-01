@@ -281,30 +281,30 @@ export const updateOutgoing = async (req, res) => {
 };
 
 //*CREAZIONE BILANCIO
-function getDebtorsCreditors(outgoing){
+function getDebtorsCreditors(outgoing) {
     let debtors = [
-        value =[],
+        value = [],
         debtors = [],
         total = 0
     ];
     let creditors = [
-        value =[],
+        value = [],
         creditors = [],
         total = 0
     ];
-    for(let i = 0; i < outgoing.users.length; i++){
-        if(outgoing.users[i].value < 0){
+    for (let i = 0; i < outgoing.users.length; i++) {
+        if (outgoing.users[i].value < 0) {
             debtors.debtors.push(outgoing.users[i]);
             debtors.value.push(outgoing.users[i].value);
             total += outgoing.users[i].value;
-        }else{
+        } else {
             creditors.creditors.push(outgoing.users[i]);
             creditors.value.push(outgoing.users[i].value);
             total += outgoing.users[i].value;
         }
     }
     return {
-        debtors, 
+        debtors,
         creditors
     };
 }
@@ -332,23 +332,19 @@ export const getOutgoings = async (req, res) => {
         const debtors = getDebtorsCreditors(outgoings).debtors;
         const creditors = getDebtorsCreditors(outgoings).creditors;
 
-        res.status(200).json({debtors, creditors});
-    }catch(error){
+        res.status(200).json({ debtors, creditors });
+    } catch (error) {
         console.error(error);
         res.status(500).json("Internal server error");
     }
 }
 
 export const getOutgoing = async (req, res) => {
+    const { id } = req.params;
     try {
-        const { id } = req.params;
-        try {
-            const outgoing = await Outgoing.findById(id);
-            res.status(200).json(outgoing);
-        } catch (error) {
-            return res.status(404).json({ message: 'Outgoing not found' });
-        }
-    }catch(error) {
-        res.status(400).json("No id provided");
+        const outgoing = await Outgoing.findById(id);
+        res.status(200).json(outgoing);
+    } catch (error) {
+        return res.status(404).json({ message: 'Outgoing not found' });
     }
 }
