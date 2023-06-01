@@ -289,11 +289,11 @@ function getDebtors(outgoings, id){
         total: 0
     };
     for(let i = 0; i < outgoings.length; i++){
-        if(outgoings[i].paidBy === id){
+        if(outgoings[i].paidBy.equals(id)){
             for(let j = 0; j < outgoings[i].users.length; j++){
                 debtors.debtors.push(outgoings[i].users[j].user);
                 debtors.value.push(outgoings[i].users[j].value);
-                total += outgoings[i].users[j].value;
+                debtors.total += outgoings[i].users[j].value;
             }
         }
     }
@@ -351,10 +351,10 @@ export const getOutgoings = async (req, res) => {
             return res.status(404).json({ message: 'Outgoings not found' });
 
         const response = getDebtorsCreditors(outgoings, id);
-        //const debtors = getDebtors(outgoings, id); //response.debtors;
+        const debtors = getDebtors(outgoings, id); //response.debtors;
         const creditors = getCreditors(outgoings, id); //response.creditors;
 
-        res.status(200).json(creditors);
+        res.status(200).json(debtors);
     }catch(error){
         console.error(error);
         res.status(500).json("Internal server error");
