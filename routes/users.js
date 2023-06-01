@@ -1,6 +1,7 @@
 import express from 'express';
-import { getUser, getUserGroups, getUserOutgoings, updateUser, deleteUser } from '../controllers/users.js';
+import { getUser, getUserGroups, getUserOutgoings, updateUser, deleteUser, getReport } from '../controllers/users.js';
 import { validateToken } from '../middleware/auth.js';
+import { get } from 'mongoose';
 
 const router = express.Router();
 
@@ -538,5 +539,7 @@ router.put("/:id", validateToken, updateUser);
  *                   example: "Internal server error"  
  */
 router.delete("/:id", validateToken, deleteUser);
+
+router.get("/:id/report", validateToken, getReport);
 
 export default router;

@@ -1,8 +1,7 @@
 import express from "express";
 import {
     createOutgoing,
-    updateOutgoing,
-    getOutgoings, 
+    updateOutgoing, 
     getOutgoing } from "../controllers/outgoings.js";
 import { validateToken } from "../middleware/auth.js";
 
@@ -488,9 +487,6 @@ router.put("/:id", validateToken, updateOutgoing);
  *                   example: "Internal server error"  
  */
 router.get("/:id", validateToken, getOutgoing);
-
-router.get("/:id/report", validateToken, getOutgoings);
-
 
 
 export default router;
