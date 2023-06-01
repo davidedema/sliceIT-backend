@@ -61,3 +61,17 @@ export const getOutgoings = async (req, res) => {
         res.status(500).json("Internal server error");
     }
 }
+
+export const getOutgoing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        try {
+            const outgoing = await Outgoing.findById(id);
+            res.status(200).json(outgoing);
+        } catch (error) {
+            return res.status(404).json({ message: 'Outgoing not found' });
+        }
+    }catch(error) {
+        res.status(400).json("No id provided");
+    }
+}
