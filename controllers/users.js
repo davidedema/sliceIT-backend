@@ -24,6 +24,7 @@ export const getUser = async (req, res) => {
 
 export const getUserGroups = async (req, res) => {
     try {
+        /*console.log("getUserGroups");*/
         const { id } = req.params;
         let token = req.header("x-auth-token");
         if (token.startsWith("Bearer ")) {
@@ -34,8 +35,7 @@ export const getUserGroups = async (req, res) => {
         if (verified.id !== id)
             return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
-        if (!user)
-            return res.status(404).json({ message: 'User not found' });
+        if (!user) return res.status(404).json({ message: 'User not found' });
         const groups = await Group.find({ _id: { $in: user.groups } });
         if (!groups)
             return res.status(404).json({ message: 'Groups not found' });
