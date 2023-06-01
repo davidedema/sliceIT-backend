@@ -1,35 +1,55 @@
-import Group from "../models/group.js";
 import User from "../models/user.js";
 import Outgoing from '../models/outgoing.js';
 import jwt from "jsonwebtoken";
+import { get } from "mongoose";
 
-//*CREAZIONE BILANCIO
-function getDebtorsCreditors(outgoing){
-    let debtors = [
-        value =[],
-        debtors = [],
-        total = 0
-    ];
-    let creditors = [
-        value =[],
-        creditors = [],
-        total = 0
-    ];
-    for(let i = 0; i < outgoing.users.length; i++){
-        if(outgoing.users[i].value < 0){
-            debtors.debtors.push(outgoing.users[i]);
-            debtors.value.push(outgoing.users[i].value);
-            total += outgoing.users[i].value;
-        }else{
-            creditors.creditors.push(outgoing.users[i]);
-            creditors.value.push(outgoing.users[i].value);
-            total += outgoing.users[i].value;
+//DEBITORI
+function getDebtors(outgoings, id){
+    const debtors = {
+        value: [],
+        debtors: [],
+        total: 0
+    };
+    for(let i = 0; i < outgoings.length; i++){
+        if(outgoings[i].paidBy === id){
+            for(let j = 0; j < outgoings[i].users.length; j++){
+                debtors.debtors.push(outgoings[i].users[j].user);
+                debtors.value.push(outgoings[i].users[j].value);
+                total += outgoings[i].users[j].value;
+            }
         }
     }
-    return {
-        debtors, 
-        creditors
+    return debtors;    
+}
+
+//CREDITORI
+function getCreditors(outgoings, id){
+    const creditors = {
+        value: [],
+        creditors: [],
+        total: 0
     };
+    for(let i = 0; i < outgoings.length; i++){
+        if(!outgoings[i].paidBy.equals(id)){
+            let user = outgoings[i].users.find(u => u.user.equals(id));
+            if(!user){
+                continue;
+            }
+            creditors.value.push(user.value);
+            creditors.creditors.push(outgoings[i].paidBy);
+            creditors.total += user.value;
+        }
+    }
+    return creditors;
+}
+
+//CREAZIONE BILANCIO
+function getDebtorsCreditors(outgoings, id){
+    const response = {
+        debtors: getDebtors(outgoings, id),
+        creditors: getCreditors(outgoings, id)
+    };
+    return response;
 }
 
 export const getOutgoings = async (req, res) => {
@@ -52,10 +72,11 @@ export const getOutgoings = async (req, res) => {
         if (!outgoings)
             return res.status(404).json({ message: 'Outgoings not found' });
 
-        const debtors = getDebtorsCreditors(outgoings).debtors;
-        const creditors = getDebtorsCreditors(outgoings).creditors;
+        const response = getDebtorsCreditors(outgoings, id);
+        //const debtors = getDebtors(outgoings, id); //response.debtors;
+        const creditors = getCreditors(outgoings, id); //response.creditors;
 
-        res.status(200).json({debtors, creditors});
+        res.status(200).json(creditors);
     }catch(error){
         console.error(error);
         res.status(500).json("Internal server error");

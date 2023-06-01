@@ -4,6 +4,6 @@ import { validateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/:id/outgoings", validateToken, getOutgoings);
+router.get("/:id/report", validateToken, getOutgoings);
 
 export default router;
