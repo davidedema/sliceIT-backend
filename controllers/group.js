@@ -227,9 +227,9 @@ export const getGroupBalance = async (req, res) => {
                 }
             }
             // Restituisci il bilancio del gruppo come risposta
-            res.status(200).json({ balance });
+            res.status(200).json(balance);
         } catch (error) {
-            res.status(404).send("Group not found");
+            res.status(404).send("Group not found nel bilancio");
             return;
         }
     } catch (error) {
