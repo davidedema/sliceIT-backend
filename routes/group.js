@@ -142,15 +142,45 @@ router.get("/:groupId", validateToken, getGroup);
  *             schema:
  *               type: object
  *               properties:
- *                 members:
+ *                 members: 
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
- *                       id:
+ *                       email:
  *                         type: string
- *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                         description: Id of the user                
+ *                         example: "exampleATexample.com"
+ *                         description: Email of the user   
+ *                       password:
+ *                         type: string
+ *                         example: "password"
+ *                         description: password of the user         
+ *                       nickname:
+ *                         type: string
+ *                         example: "nickname"
+ *                         description: nickname of the user
+ *                       firstName:
+ *                         type: string
+ *                         example: "name" 
+ *                       lastName:
+ *                         type: string
+ *                         example: "surname"  
+ *                       groups:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                             description: Ids of the users 
+ *                       outgoings:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                               description: Id of the outgoing       
  *       403:
  *         description: Forbidden, user is not a member of the group
  *         content:
@@ -211,7 +241,7 @@ router.get("/:groupId/users", validateToken, getGroupUsers);
  *             schema:
  *               type: object
  *               properties:
- *                 outgoings:
+ *                 outgoings: 
  *                   type: array
  *                   items:
  *                     type: object
@@ -219,7 +249,46 @@ router.get("/:groupId/users", validateToken, getGroupUsers);
  *                       id:
  *                         type: string
  *                         example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                         description: Id of the group
+ *                         description: Id of the outgoing   
+ *                       name:
+ *                         type: string
+ *                         example: "name"
+ *                         description: Name of the outgoing         
+ *                       value:
+ *                         type: number
+ *                         example: "10"
+ *                         description: Value of the outgoing
+ *                       paidBy:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                             description: Id of the user  
+ *                       components:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                               description: Ids of the users
+ *                       group:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                             description: Ids of the users 
+ *                       isPeriodic:
+ *                         type: boolean
+ *                         example: "true"
+ *                         description: If the outgoing is periodic
+ *                       tag:
+ *                         type: string
+ *                         example: "food"
+ *                         description: Tag of the outgoing
  *       403:
  *         description: Forbidden, user is not a member of the group
  *         content:
