@@ -7,6 +7,7 @@ import {
   joinGroup,
   updateGroup,
   leaveGroup,
+  getGroupBalance,
 } from "../controllers/group.js";
 import { validateToken } from "../middleware/auth.js";
 
@@ -252,6 +253,8 @@ router.get("/:groupId/users", validateToken, getGroupUsers);
  *                   example: "Internal server error"  
  */
 router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
+
+router.get("/:groupId/balance", validateToken, getGroupBalance);
 
 /* POST */
 
