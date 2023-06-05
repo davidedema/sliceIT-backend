@@ -19,8 +19,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /* CONFIGURATIONS */
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 app.use(helmet());
@@ -81,3 +79,5 @@ mongoose.connect(process.env.MONGO_URL, {
 }).then(() => {
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 }).catch((error) => console.log(error.message));
+
+export default app;

@@ -1,7 +1,7 @@
-import Group from "../models/group.js";
 import User from "../models/user.js";
 import Outgoing from '../models/outgoing.js';
 import jwt from "jsonwebtoken";
+import { get } from "mongoose";
 
 async function isInGroup(user, group, token) {
     const gruppi = await fetch('http://localhost:3001/api/v1/groups/' + group + '/', {
@@ -279,3 +279,13 @@ export const updateOutgoing = async (req, res) => {
         return res.status(404).json({ message: "Outgoing not found" });
     }
 };
+
+export const getOutgoing = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const outgoing = await Outgoing.findById(id);
+        res.status(200).json(outgoing);
+    } catch (error) {
+        return res.status(404).json({ message: 'Outgoing not found' });
+    }
+}

@@ -141,3 +141,65 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+//BILANCIO
+//Creditori
+function getCreditors(outgoings, id){
+    const creditors = {
+        value: [],
+        creditors: [],
+        total: 0
+    };
+    for(let i = 0; i < outgoings.length; i++){
+        if(!outgoings[i].paidBy.equals(id)){
+            let user = outgoings[i].users.find(u => u.user.equals(id));
+            if(!user){
+                continue;
+            }
+            creditors.value.push(user.value);
+            creditors.creditors.push(outgoings[i].paidBy);
+            creditors.total += user.value;
+        }
+    }
+    return creditors;
+}
+
+//Debitori
+function getDebtors(outgoings, id){
+    const debtors = {
+        value: [],
+        debtors: [],
+        total: 0
+    };
+    for(let i = 0; i < outgoings.length; i++){
+        if(outgoings[i].paidBy.equals(id)){
+            for(let j = 0; j < outgoings[i].users.length; j++){
+                debtors.debtors.push(outgoings[i].users[j].user);
+                debtors.value.push(outgoings[i].users[j].value);
+                debtors.total += outgoings[i].users[j].value;
+            }
+        }
+    }
+    return debtors;    
+}
+
+//Bilancio
+export const getReport = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const user = await User.findById(id);
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
+        const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
+        if (!outgoings)
+            return res.status(404).json({ message: 'Outgoings not found' });
+
+        const debtors = getDebtors(outgoings, id);
+        const creditors = getCreditors(outgoings, id); 
+        
+        res.status(200).json({ debtors, creditors });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}

@@ -1,8 +1,8 @@
 import express from "express";
 import {
     createOutgoing,
-    updateOutgoing,
-} from "../controllers/outgoings.js";
+    updateOutgoing, 
+    getOutgoing } from "../controllers/outgoings.js";
 import { validateToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -378,5 +378,115 @@ router.post("/", validateToken, createOutgoing);
  *                   example: "Internal server error"  
  */
 router.put("/:id", validateToken, updateOutgoing);
+
+/**
+ * @swagger
+ * /api/v1/outgoings/:id:
+ *   get:
+ *     summary: Get an outgoing by id
+ *     description: Get an outgoing by id
+ *     tags: 
+ *       - Outgoings
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the outgoing
+ *         required: true
+ * 
+ *     responses:
+ *       200:
+ *         description: User found, return it
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   example: "Test outgoing"      
+ *                   description: The name of the outgoing
+ *                 description:
+ *                   type: string
+ *                   example: "This is a test outgoing"
+ *                   description: The description of the outgoing
+ *                 value:
+ *                   type: number
+ *                   example: "45.50"
+ *                   description: The value of the outgoing
+ *                 paidBy:
+ *                   type: string
+ *                   example: "60b9e0b3e6b0f2a0b4f5e0b3"
+ *                   description: The id of the user who paid the outgoing
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       user:
+ *                         type: string
+ *                         example: "60b9e0b3e6b0f2a0b4f5e0b3" 
+ *                         description: The id of the user who is involved in the outgoing
+ *                       value:
+ *                         type: number
+ *                         example: "45.50"
+ *                         description: The value of the outgoing for the user  
+ *                 group:
+ *                   type: string
+ *                   example: "60b9e0b3e6b0f2a0b4f5e0b3"
+ *                   description: The id of the group where the outgoing is created
+ *                 periodicity:
+ *                   type: object
+ *                   properties:
+ *                     isPeriodic:
+ *                       type: boolean
+ *                       example: true
+ *                       description: If the outgoing is periodic or not 
+ *                     period:
+ *                       type: number
+ *                       example: 1
+ *                       description: The period of the outgoing                             
+ *                 tag:
+ *                   type: string
+ *                   example: "food"    
+ *                   description: The tag of the outgoing                 
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Not authorized"
+ *
+ *       404:
+ *         description: Outgoing not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Outgoing not found"                           
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"  
+ */
+router.get("/:id", validateToken, getOutgoing);
+
 
 export default router;
