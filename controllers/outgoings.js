@@ -134,8 +134,6 @@ export const createOutgoing = async (req, res) => {
         let total;
         for (let i = 0; i < users.length; i++) {
             total = total + users[i].value;
-            console.log(typeof (users[i].value))
-            console.log(typeof (value))
             if (value < users[i].value){
                 return res.status(400).json({ message: "Value cannot less than users value" });
             }
