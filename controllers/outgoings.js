@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import Outgoing from '../models/outgoing.js';
+import Group from '../models/group.js';
 import jwt from "jsonwebtoken";
 import { get } from "mongoose";
 
@@ -60,7 +61,7 @@ function uniqueUsers(users) {
 
 export const createOutgoing = async (req, res) => {
     try {
-        const {
+        var {
             name,
             description,
             value,
@@ -70,7 +71,10 @@ export const createOutgoing = async (req, res) => {
             periodicity,
             tag,
         } = req.body;
-
+        value = parseFloat(value);
+        for (let i = 0; i < users.length; i++) {
+            users[i].value = parseFloat(users[i].value);
+        }
         let token = req.header("x-auth-token");
 
         if (!name || !value || !paidBy || !users || !group || !periodicity)
@@ -130,11 +134,12 @@ export const createOutgoing = async (req, res) => {
         let total;
         for (let i = 0; i < users.length; i++) {
             total = total + users[i].value;
-            if (value < users[i].value)
+            if (value < users[i].value){
                 return res.status(400).json({ message: "Value cannot less than users value" });
+            }
         }
         if (value < total)
-            return res.status(400).json({ message: "Value cannot less than users value" });
+            return res.status(400).json({ message: "Value cannot less than total users value" });
 
         const newOutgoing = new Outgoing({
             name,
