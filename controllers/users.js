@@ -149,6 +149,7 @@ function getCreditors(outgoings, id){
         creditors: [],
         total: 0
     };
+
     for(let i = 0; i < outgoings.length; i++){
         if(!outgoings[i].paidBy.equals(id)){
             let user = outgoings[i].users.find(u => u.user.equals(id));
@@ -157,11 +158,17 @@ function getCreditors(outgoings, id){
             }
             let existingCreditor = creditors.creditors.find(c => c.creditor.equals(outgoings[i].paidBy));
             if(existingCreditor){
-                existingCreditor.value.push(user.value);
+                existingCreditor.value.push({
+                    money: user.value,
+                    group: outgoings[i].group
+                });
             } else {
                 creditors.creditors.push({
                     creditor: outgoings[i].paidBy,
-                    value: [user.value]
+                    value: [{
+                        money: user.value,
+                        group: outgoings[i].group
+                    }],
                 });
             }
             creditors.total += user.value;
@@ -181,11 +188,17 @@ function getDebtors(outgoings, id){
             for(let j = 0; j < outgoings[i].users.length; j++){
                 let existingDebtors = debtors.debtors.find(d => d.debtors.equals(outgoings[i].users[j].user));
                 if(existingDebtors){
-                    existingDebtors.value.push(outgoings[i].users[j].value);
+                    existingDebtors.value.push({
+                        money: outgoings[i].users[j].value,
+                        group: outgoings[i].group
+                    });
                 } else {
                     debtors.debtors.push({
                         debtors: outgoings[i].users[j].user,
-                        value: [outgoings[i].users[j].value]
+                        value: [{
+                            money: outgoings[i].users[j].value,
+                            group: outgoings[i].group
+                        }]
                     });
                 }
                 debtors.total += outgoings[i].users[j].value;;
