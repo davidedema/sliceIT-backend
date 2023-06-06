@@ -146,7 +146,6 @@ export const deleteUser = async (req, res) => {
 //Creditori
 function getCreditors(outgoings, id){
     const creditors = {
-        value: [],
         creditors: [],
         total: 0
     };
@@ -156,8 +155,15 @@ function getCreditors(outgoings, id){
             if(!user){
                 continue;
             }
-            creditors.value.push(user.value);
-            creditors.creditors.push(outgoings[i].paidBy);
+            let existingCreditor = creditors.creditors.find(c => c.creditor.equals(outgoings[i].paidBy));
+            if(existingCreditor){
+                existingCreditor.value.push(user.value);
+            } else {
+                creditors.creditors.push({
+                    creditor: outgoings[i].paidBy,
+                    value: [user.value]
+                });
+            }
             creditors.total += user.value;
         }
     }
@@ -167,16 +173,23 @@ function getCreditors(outgoings, id){
 //Debitori
 function getDebtors(outgoings, id){
     const debtors = {
-        value: [],
         debtors: [],
+        //value: [],
         total: 0
     };
     for(let i = 0; i < outgoings.length; i++){
         if(outgoings[i].paidBy.equals(id)){
             for(let j = 0; j < outgoings[i].users.length; j++){
-                debtors.debtors.push(outgoings[i].users[j].user);
-                debtors.value.push(outgoings[i].users[j].value);
-                debtors.total += outgoings[i].users[j].value;
+                let existingDebtors = debtors.debtors.find(d => d.debtors.equals(outgoings[i].users[j].user));
+                if(existingDebtors){
+                    existingDebtors.value.push(outgoings[i].users[j].value);
+                } else {
+                    debtors.debtors.push({
+                        debtors: outgoings[i].users[j].user,
+                        value: [outgoings[i].users[j].value]
+                    });
+                }
+                debtors.total += outgoings[i].users[j].value;;
             }
         }
     }
