@@ -540,6 +540,107 @@ router.put("/:id", validateToken, updateUser);
  */
 router.delete("/:id", validateToken, deleteUser);
 
+/**
+ * @swagger
+ * /api/v1/users/:id/report:
+ *   get:
+ *     summary: Get the report by id
+ *     description: Get the report by id
+ *     tags: 
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the user
+ *         required: true
+ *     
+ *     responses:
+ *       200:
+ *         description: Successful operation. Return report.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 debtors:
+ *                   type: object
+ *                   properties:
+ *                     debtors:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       description: List of debtors
+ *                     value:
+ *                       type: array
+ *                       items:
+ *                         type: number
+ *                       description: List of debt amounts associated with debtors
+ *                     total:
+ *                       type: number
+ *                       description: Total debt amount
+ *                   description: Debtors information
+ *                 creditors:
+ *                   type: object
+ *                   properties:
+ *                     creditors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           creditor:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: string
+ *                                 example: "5f9d88b9c2b3d11f3c0b1b0a"
+ *                                 description: ID of the creditor
+ *                           value:
+ *                             type: array
+ *                             items:
+ *                               type: number
+ *                             description: List of credit amounts
+ *                         description: Creditor information
+ *                     total:
+ *                       type: number
+ *                       description: Total credit amount
+ *                   description: Creditors information
+ *                 
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Not authorized"
+ *       404:
+ *         description: User not found or outgoings not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 router.get("/:id/report", validateToken, getReport);
 
 export default router;

@@ -174,7 +174,6 @@ function getCreditors(outgoings, id){
 function getDebtors(outgoings, id){
     const debtors = {
         debtors: [],
-        //value: [],
         total: 0
     };
     for(let i = 0; i < outgoings.length; i++){
