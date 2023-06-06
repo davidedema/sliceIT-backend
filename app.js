@@ -72,13 +72,4 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-/* MOONGOSE */
-const PORT = process.env.PORT || 8080;
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true, useUnifiedTopology: true
-}).then(() => {
-    app.listen(PORT);
-}).catch((error) => console.log(error.message));
-
-
 export default app;
