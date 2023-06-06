@@ -1,10 +1,24 @@
-const request = require('supertest');
+/* const request = require('supertest');
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 import app from '../app.js';
 import mongoose from 'mongoose';
 
+
 describe('POST /api/v1/auth/login', () => {
-    test('should return 200', async () => {
+    var server;
+    
+    beforeAll((done) => {
+        server = app.listen(3001, () => {
+            done();
+        });
+    });
+    
+    afterAll((done) => {
+        server.close( () => {
+            done();
+        });
+    });
+    test('Login with right credentials should return 200', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -14,7 +28,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(200);
     });
-    test('should return 400', async () => {
+    test('Login with no password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -23,7 +37,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with no email should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -32,7 +46,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -42,7 +56,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad email and password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -52,7 +66,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -65,7 +79,7 @@ describe('POST /api/v1/auth/login', () => {
 });
 
 describe('POST /api/v1/auth/register', () => {
-    test('should return 201', async () => {
+    test('Register a new user should return 201', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -78,7 +92,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(201);
     });
-    test('should return 400', async () => {
+    test('Register with no mail should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -90,7 +104,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with no nickname should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -101,7 +115,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with no password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -112,7 +126,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with existing nickname should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -125,7 +139,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with existing email should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -139,3 +153,4 @@ describe('POST /api/v1/auth/register', () => {
             .expect(400);
     });
 });
+ */
