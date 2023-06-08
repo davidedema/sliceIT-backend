@@ -160,8 +160,9 @@ function getCreditors(outgoings, id){
             if(existingCreditor){
                 existingCreditor.value.push({
                     money: user.value,
-                    group: outgoings[i].group
+                    group: outgoings[i].group,
                 });
+                existingCreditor.totalValue += user.value;
             } else {
                 creditors.creditors.push({
                     creditor: outgoings[i].paidBy,
@@ -169,6 +170,7 @@ function getCreditors(outgoings, id){
                         money: user.value,
                         group: outgoings[i].group
                     }],
+                    totalValue: user.value
                 });
             }
             creditors.total += user.value;
@@ -192,13 +194,15 @@ function getDebtors(outgoings, id){
                         money: outgoings[i].users[j].value,
                         group: outgoings[i].group
                     });
+                    existingDebtors.totalValue += outgoings[i].users[j].value;
                 } else {
                     debtors.debtors.push({
                         debtors: outgoings[i].users[j].user,
                         value: [{
                             money: outgoings[i].users[j].value,
                             group: outgoings[i].group
-                        }]
+                        }],
+                        totalValue: outgoings[i].users[j].value
                     });
                 }
                 debtors.total += outgoings[i].users[j].value;;
