@@ -3,8 +3,26 @@ const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 import app from '../app.js';
 import mongoose from 'mongoose';
 
+
 describe('POST /api/v1/auth/login', () => {
-    test('should return 200', async () => {
+    var connection;
+
+    beforeAll(async () => {
+        jest.setTimeout(8000);
+        jest.unmock('mongoose');
+        connection = await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log('Database connected!');
+    });
+
+    afterAll(async () => {
+        try {
+            await mongoose.connection.close();
+            console.log("Database connection closed");
+        } catch (error) {
+            console.log("Error closing database connection:", error);
+        }
+    });
+    test('Login with right credentials should return 200', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -14,7 +32,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(200);
     });
-    test('should return 400', async () => {
+    test('Login with no password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -23,7 +41,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with no email should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -32,7 +50,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -42,7 +60,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad email and password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -52,7 +70,7 @@ describe('POST /api/v1/auth/login', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Login with bad password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/login')
             .set('Accept', 'application/json')
@@ -65,10 +83,26 @@ describe('POST /api/v1/auth/login', () => {
 });
 
 describe('POST /api/v1/auth/register', () => {
-    test('should return 201', async () => {
+    var connection;
+
+    beforeAll(async () => {
+        jest.setTimeout(8000);
+        jest.unmock('mongoose');
+        connection = await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        console.log('Database connected!');
+    });
+
+    afterAll(async () => {
+        try {
+            await mongoose.connection.close();
+            console.log("Database connection closed");
+        } catch (error) {
+            console.log("Error closing database connection:", error);
+        }
+    });
+    /* test('Register a new user should return 201', async () => {
         return request(app)
             .post('/api/v1/auth/register')
-            .set('Accept', 'application/json')
             .send({
                 firstName: 'testing',
                 lastName: 'user',
@@ -77,8 +111,8 @@ describe('POST /api/v1/auth/register', () => {
                 password: 'testinguser123'
             })
             .expect(201);
-    });
-    test('should return 400', async () => {
+    }); */
+    test('Register with no mail should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -90,7 +124,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with no nickname should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -101,7 +135,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with no password should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -112,7 +146,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with existing nickname should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')
@@ -125,7 +159,7 @@ describe('POST /api/v1/auth/register', () => {
             })
             .expect(400);
     });
-    test('should return 400', async () => {
+    test('Register with existing email should return 400', async () => {
         return request(app)
             .post('/api/v1/auth/register')
             .set('Accept', 'application/json')

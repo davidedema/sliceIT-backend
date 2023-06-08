@@ -24,18 +24,19 @@ export const getUser = async (req, res) => {
 
 export const getUserGroups = async (req, res) => {
     try {
-        /*console.log("getUserGroups");*/
         const { id } = req.params;
         let token = req.header("x-auth-token");
         if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
-        // se chi ha fatto la richiesta non corrisponde all'utente cercato
-        if (verified.id !== id)
-            return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: 'User not found' });
+        // se chi ha fatto la richiesta non corrisponde all'utente cercato
+        console.log(verified)
+        console.log(verified.id, id)
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         const groups = await Group.find({ _id: { $in: user.groups } });
         if (!groups)
             return res.status(404).json({ message: 'Groups not found' });
@@ -53,12 +54,12 @@ export const getUserOutgoings = async (req, res) => {
             token = token.slice(7, token.length).trimLeft();
         }
         const verified = jwt.verify(token, process.env.JWT_SECRET);
-        // se chi ha fatto la richiesta non corrisponde all'utente cercato
-        if (verified.id !== id)
-            return res.status(401).json({ message: 'Not authorized' });
         const user = await User.findById(id);
         if (!user)
             return res.status(404).json({ message: 'User not found' });
+        // se chi ha fatto la richiesta non corrisponde all'utente cercato
+        if (verified.id !== id)
+            return res.status(401).json({ message: 'Not authorized' });
         const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
         if (!outgoings)
             return res.status(404).json({ message: 'Outgoings not found' });

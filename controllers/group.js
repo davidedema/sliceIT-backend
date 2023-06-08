@@ -243,6 +243,9 @@ export const createGroup = async (req, res) => {
     try {
         const { name, description, groupPicture } = req.body;
         const inviteLink = generateInviteLink();
+        
+        if(!name)
+            return res.status(400).json({message : 'missing fields'})
 
         const group = new Group({
             name,
