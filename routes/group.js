@@ -392,6 +392,16 @@ router.get("/:groupId/outgoings", validateToken, getGroupOutgoings);
  *                   type: array
  *                   items:
  *                     type: object
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Missing required fields"      
  *
  *       500:
  *         description: Internal server error
