@@ -540,13 +540,14 @@ router.put("/:id", validateToken, updateUser);
  */
 router.delete("/:id", validateToken, deleteUser);
 
+
 /**
  * @swagger
  * /api/v1/users/:id/report:
  *   get:
- *     summary: Get the report by id
- *     description: Get the report by id
- *     tags: 
+ *     summary: Get report by id
+ *     description: Get a report of the user
+ *     tags:
  *       - Users
  *     produces:
  *       - application/json
@@ -558,10 +559,10 @@ router.delete("/:id", validateToken, deleteUser);
  *         type: string
  *         description: Id of the user
  *         required: true
- *     
+ *  
  *     responses:
  *       200:
- *         description: Successful operation. Return report.
+ *         description: User's report retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -573,17 +574,33 @@ router.delete("/:id", validateToken, deleteUser);
  *                     debtors:
  *                       type: array
  *                       items:
- *                         type: string
- *                       description: List of debtors
- *                     value:
- *                       type: array
- *                       items:
- *                         type: number
- *                       description: List of debt amounts associated with debtors
+ *                         type: object
+ *                         properties:
+ *                           debtors:
+ *                             type: string
+ *                             example: "6458c6466915e3b80523e0e6"
+ *                             description: ID of the debtor
+ *                           value:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 money:
+ *                                   type: number
+ *                                   example: 432432
+ *                                   description: Amount of money owed by the debtor
+ *                                 group:
+ *                                   type: string
+ *                                   example: "645a61e383d06be08c4252b7"
+ *                                   description: ID of the group
+ *                           totalValue:
+ *                             type: number
+ *                             example: 432464
+ *                             description: Total amount owed by all debtors
  *                     total:
  *                       type: number
- *                       description: Total debt amount
- *                   description: Debtors information
+ *                       example: 432517
+ *                       description: Total amount owed by all debtors
  *                 creditors:
  *                   type: object
  *                   properties:
@@ -593,23 +610,30 @@ router.delete("/:id", validateToken, deleteUser);
  *                         type: object
  *                         properties:
  *                           creditor:
- *                             type: object
- *                             properties:
- *                               id:
- *                                 type: string
- *                                 example: "5f9d88b9c2b3d11f3c0b1b0a"
- *                                 description: ID of the creditor
+ *                             type: string
+ *                             example: "6458c6466915e3b80523e0e6"
+ *                             description: ID of the creditor
  *                           value:
  *                             type: array
  *                             items:
- *                               type: number
- *                             description: List of credit amounts
- *                         description: Creditor information
+ *                               type: object
+ *                               properties:
+ *                                 money:
+ *                                   type: number
+ *                                   example: 532
+ *                                   description: Amount of money owed to the creditor
+ *                                 group:
+ *                                   type: string
+ *                                   example: "645a61e383d06be08c4252b7"
+ *                                   description: ID of the group
+ *                           totalValue:
+ *                             type: number
+ *                             example: 2176
+ *                             description: Total amount owed by all creditors
  *                     total:
  *                       type: number
- *                       description: Total credit amount
- *                   description: Creditors information
- *                 
+ *                       example: 2176
+ *                       description: Total amount owed to all creditors
  *       401:
  *         description: Unauthorized
  *         content:
@@ -621,7 +645,7 @@ router.delete("/:id", validateToken, deleteUser);
  *                   type: string
  *                   example: "Not authorized"
  *       404:
- *         description: User not found or outgoings not found.
+ *         description: User not found
  *         content:
  *           application/json:
  *             schema:
@@ -631,7 +655,7 @@ router.delete("/:id", validateToken, deleteUser);
  *                   type: string
  *                   example: "User not found"
  *       500:
- *         description: Internal server error.
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -640,7 +664,7 @@ router.delete("/:id", validateToken, deleteUser);
  *                 message:
  *                   type: string
  *                   example: "Internal server error"
- */
+*/
 router.get("/:id/report", validateToken, getReport);
 
 export default router;
