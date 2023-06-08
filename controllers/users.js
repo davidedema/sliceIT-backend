@@ -212,6 +212,26 @@ function getDebtors(outgoings, id){
     return debtors;    
 }
 
+function checkDebtorsCreditors(debtors, creditors){
+    for(let i = 0; i < debtors.debtors.length; i++){
+        for(let j = 0; j < creditors.creditors.length; j++){
+            if(debtors.debtors[i].debtors.equals(creditors.creditors[j].creditor)){
+                if(debtors.debtors[i].totalValue > creditors.creditors[j].totalValue){
+                    debtors.debtors[i].totalValue -= creditors.creditors[j].totalValue;
+                    creditors.creditors.splice(j, 1);
+                } else if(debtors.debtors[i].totalValue < creditors.creditors[j].totalValue){
+                    creditors.creditors[j].totalValue -= debtors.debtors[i].totalValue;
+                    debtors.debtors.splice(i, 1);
+                } else {
+                    debtors.debtors.splice(i, 1);
+                    creditors.creditors.splice(j, 1);
+                }
+            }
+        }
+    }
+    return {debtors, creditors};
+}
+
 //Bilancio
 export const getReport = async (req, res) => {
     try {
@@ -223,10 +243,11 @@ export const getReport = async (req, res) => {
         const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
         if (!outgoings)
             return res.status(404).json({ message: 'Outgoings not found' });
-
-        const debtors = getDebtors(outgoings, id);
-        const creditors = getCreditors(outgoings, id); 
         
+        const people = checkDebtorsCreditors(getDebtors(outgoings, id), getCreditors(outgoings, id));
+        const debtors = people.debtors;
+        const creditors = people.creditors;
+
         res.status(200).json({ debtors, creditors });
     } catch (error) {
         res.status(404).json({ message: error.message });
