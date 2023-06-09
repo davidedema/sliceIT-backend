@@ -29,29 +29,28 @@ import jwt from "jsonwebtoken";
 }*/
 
 /*FUNZIONE CHE RESTITUISCE LE SPESE DI UN GRUPPO*/
-async function fetchGroupOutgoings(groupId, token) {
+/*async function fetchGroupOutgoings(groupId, token) {
     try {
-        const response = await fetch(
-            "http://localhost:3000/api/v1/groups/" + groupId + "/outgoings",
-            {
-                method: "GET",
-                headers: {
-                    "x-auth-token": token,
-                },
-            }
-        );
-        if (response.ok) {
-            const data = await response.json();
-            return data;
-        } else {
-            // Handle error response from the server
-            const errorData = await response.json();
-            console.error("response failed:", errorData.message);
-        }
+      const response = await fetch(`http://localhost:3001/api/v1/groups/${groupId}/outgoings`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": token,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        // Handle error response from the server
+        const errorData = await response.json();
+        console.error("response failed:", errorData.message);
+        return [];
+      }
     } catch (error) {
-        console.error("error:", error);
+      console.error("error:", error);
+      return [];
     }
-}
+  }*/
 
 /*FUNZIONE CHE GENERA UN LINK D'INVITO UNIVOCO*/
 function generateInviteLink() {
@@ -167,71 +166,82 @@ export const getGroupOutgoings = async (req, res) => {
 export const getGroupBalance = async (req, res) => {
     try {
         const { groupId } = req.params;
-        try {
-            let token = req.header("x-auth-token");
+        const token = req.header("x-auth-token");
 
-            // Fetch delle spese del gruppo
-            const groupOutgoings = await fetchGroupOutgoings(groupId,token);
+        // Trova il gruppo nel database con l'ID specificato
+        const group = await Group.findById(groupId);
+        console.log("id del gruppo:" + groupId);
 
-            // Trova il gruppo nel database con l'ID specificato
-            const group = await Group.findById(groupId);
+        // Verifica se l'utente che fa la richiesta è membro del gruppo
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7, token.length);
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+        if (!group.members.includes(userId)) {
+            return res
+                .status(403)
+                .json({ message: "L'utente non è membro del gruppo." });
+        }
 
-            // Verifica se l'utente che fa la richiesta è membro del gruppo
-            if (token.startsWith("Bearer ")) {
-                token = token.slice(7, token.length);
-            }
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const userId = decoded.id;
-            if (!group.members.includes(userId)) {
-                return res
-                    .status(403)
-                    .json({ message: "L'utente non è membro del gruppo." });
-            }
+        //recuopera le spese del gruppo
+        const outgoings = await Outgoing.find({
+            _id: { $in: group.outgoings },
+        });
 
-            // Calcola il bilancio del gruppo
-            const balance = {};
+        // Calcola il bilancio del gruppo
+        const balance = [];
 
-            // Itera sulle spese del gruppo
-            for (const spesa of groupOutgoings) {
-                // Ignora le spese contrassegnate come pagate
-                if (spesa.isPaid) continue;
+        // Itera sulle spese del gruppo
+        for (const spesa of outgoings) {
+            // Ignora le spese contrassegnate come pagate
+            if (spesa.isPaid) continue;
 
-                if (userId == spesa.paidBy) {
-                    // L'utente corrente ha pagato la spesa
-                    for (const membro of spesa.users) {
-                        const otherUserId = membro.user;
+            if (userId == spesa.paidBy) {
+                // L'utente corrente ha pagato la spesa
+                for (const membro of spesa.users) {
+                    const otherUserId = membro.user;
+                    const value = membro.value;
+
+                    // Trova l'elemento corrispondente nel bilancio
+                    const existingDebt = balance.find(
+                        (item) => item.user === otherUserId
+                    );
+
+                    if (existingDebt) {
+                        // Aggiorna il debito dell'utente corrente con l'altro utente
+                        existingDebt.debito += value;
+                    } else {
+                        // Aggiungi un nuovo elemento al bilancio
+                        balance.push({ user: otherUserId, debito: value });
+                    }
+                }
+            } else {
+                // L'utente corrente è stato pagato per la spesa
+                for (const membro of spesa.users) {
+                    if (userId == membro.user) {
+                        const otherUserId = spesa.paidBy;
                         const value = membro.value;
 
-                        // Aggiungi l'importo alla bilancia tra l'utente corrente e l'altro utente
-                        if (balance[otherUserId]) {
-                            balance[otherUserId] += value;
-                        } else {
-                            balance[otherUserId] = value;
-                        }
-                    }
-                } else {
-                    // L'utente corrente è stato pagato per la spesa
-                    for (const membro of spesa.users) {
-                    if (userId == membro.user) {
-                            const otherUserId = spesa.paidBy;
-                            const value = membro.value;
+                        // Trova l'elemento corrispondente nel bilancio
+                        const existingDebt = balance.find(
+                            (item) => item.user === otherUserId
+                        );
 
-                            // Sottrai l'importo dalla bilancia tra l'utente corrente e l'altro utente
-                            if (balance[otherUserId]) {
-                                balance[otherUserId] -= value;
-                            } else {
-                                balance[otherUserId] = -value;
-                            }
+                        if (existingDebt) {
+                            // Aggiorna il debito dell'altro utente con l'utente corrente
+                            existingDebt.debito -= value;
+                        } else {
+                            // Aggiungi un nuovo elemento al bilancio
+                            balance.push({ user: otherUserId, debito: -value });
                         }
                     }
                 }
             }
-            // Restituisci il bilancio del gruppo come risposta
-            res.status(200).json(balance);
-        } catch (error) {
-            res.status(404).send("Group not found nel bilancio");
-            return;
         }
+
+        // Restituisci il bilancio del gruppo come risposta
+        res.status(200).json(balance);
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: error.message });
@@ -243,9 +253,8 @@ export const createGroup = async (req, res) => {
     try {
         const { name, description, groupPicture } = req.body;
         const inviteLink = generateInviteLink();
-        
-        if(!name)
-            return res.status(400).json({message : 'missing fields'})
+
+        if (!name) return res.status(400).json({ message: "missing fields" });
 
         const group = new Group({
             name,
