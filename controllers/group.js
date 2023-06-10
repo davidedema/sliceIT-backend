@@ -225,7 +225,7 @@ export const getGroupBalance = async (req, res) => {
 
                         // Trova l'elemento corrispondente nel bilancio
                         const existingDebt = balance.find(
-                            (item) => item.user === otherUserId
+                            (item) => item.user == otherUserId
                         );
 
                         if (existingDebt) {
