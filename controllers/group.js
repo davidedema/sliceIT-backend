@@ -155,7 +155,6 @@ export const createGroup = async (req, res) => {
 export const joinGroup = async (req, res) => {
     try {
         const { inviteLink } = req.body;
-        console.log(inviteLink);
 
     const group = await Group.findOne({ inviteLink });
     if (!group) {
