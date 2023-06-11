@@ -224,14 +224,14 @@ function checkDebtorsCreditors(debtors, creditors){
                     creditors.creditors.splice(j, 1);
                 } else if(debtors.debtors[i].totalValue < creditors.creditors[j].totalValue){
                     creditors.creditors[j].totalValue -= debtors.debtors[i].totalValue;
-                    debtors.debtors.splice(i, 1);
                     debtors.total -= debtors.debtors[i].totalValue;
                     creditors.total -= debtors.debtors[i].totalValue;
+                    debtors.debtors.splice(i, 1);
                 } else {
+                    debtors.total -= debtors.debtors[i].totalValue;
+                    creditors.total -= debtors.debtors[i].totalValue;
                     debtors.debtors.splice(i, 1);
                     creditors.creditors.splice(j, 1);
-                    debtors.total -= debtors.debtors[i].totalValue;
-                    creditors.total -= debtors.debtors[i].totalValue;
                 }
             }
         }
