@@ -33,8 +33,6 @@ export const getUserGroups = async (req, res) => {
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: 'User not found' });
         // se chi ha fatto la richiesta non corrisponde all'utente cercato
-        console.log(verified)
-        console.log(verified.id, id)
         if (verified.id !== id)
             return res.status(401).json({ message: 'Not authorized' });
         const groups = await Group.find({ _id: { $in: user.groups } });
