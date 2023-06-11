@@ -152,7 +152,7 @@ function getCreditors(outgoings, id){
     };
 
     for(let i = 0; i < outgoings.length; i++){
-        if(!outgoings[i].paidBy.equals(id)){
+        if(!outgoings[i].paidBy.equals(id) && !outgoings[i].isPaid){
             let user = outgoings[i].users.find(u => u.user.equals(id));
             if(!user){
                 continue;
@@ -187,7 +187,7 @@ function getDebtors(outgoings, id){
         total: 0
     };
     for(let i = 0; i < outgoings.length; i++){
-        if(outgoings[i].paidBy.equals(id)){
+        if(outgoings[i].paidBy.equals(id) && !outgoings[i].isPaid){
             for(let j = 0; j < outgoings[i].users.length; j++){
                 let existingDebtors = debtors.debtors.find(d => d.debtors.equals(outgoings[i].users[j].user));
                 if(existingDebtors){
