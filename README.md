@@ -10,6 +10,7 @@
   - [Deploy](#deploy)
   - [Documentazione](#documentazione)
   - [Note](#note)
+  - [Future works](#future-works)
 
 ## Descrizione 
 SliceIT è un servizio web per la gestione semplificata di spese condivise sviluppato per il corso Ingegneria del software all'università di Trento. L'obiettivo del software è di semplificare la gestione delle spese condivise. Questo ti permetterà di creare un gruppo di spesa con i tuoi amici e condividere le spese con loro. La visualizzazione di debiti e crediti sarà immediata. Un grafico di resoconto delle spese aiuterà l'utente nel capire le categorie di spese fatte. Questa repository contiene il backend, se interessati al frontend la repository è https://github.com/davidedema/sliceIT-frontend
@@ -71,3 +72,6 @@ La documentazione tramite swagger è accessibile in due modi. O facendo partire 
 Il progetto è completo se si usa anche l'interfaccia grafica creata. Consigliamo vivamente di usarla per avere un esperienza completa. Essa è reperibile al link: https://github.com/davidedema/sliceIT-frontend. Seguire il README per l'istallazione.
 
 Ricordimao che il progetto non è stato sviluppato nella sua interezza. Per esempio manca la feature di pagare la spesa che era riservata a uno sprint successivo.
+
+## Future works
+Nel futuro vogliamo sviluppare queste funzionalità tra cui c'è la gestione delle FAQ, la possibilità di pagare una spesa e infine la possibilità di notificare un debitore del proprio debito. Inoltre ci riserveremo anche di risolvere potenziali nuovi bug e bug noti, migliorare l'interfaccia utente e sviluppare nuove funzionalità.
