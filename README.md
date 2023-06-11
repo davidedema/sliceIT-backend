@@ -51,4 +51,4 @@ La documentazione tramite swagger è accessibile in due modi. O facendo partire 
 ## Note
 Il progetto è completo se si usa anche l'interfaccia grafica creata. Consigliamo vivamente di usarla per avere un esperienza completa. Essa è reperibile al link: https://github.com/davidedema/sliceIT-frontend. Seguire il README per l'istallazione.
 
-Ricordimao che il progetto non è stato sviluppato nella sua interezza. per esempio manca la feature di pagare la spesa che era riservata a uno sprint successivo.
+Ricordimao che il progetto non è stato sviluppato nella sua interezza. Per esempio manca la feature di pagare la spesa che era riservata a uno sprint successivo.
