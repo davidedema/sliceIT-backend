@@ -5,8 +5,10 @@
   - [Table of Contents](#table-of-contents)
   - [Descrizione](#descrizione)
   - [Sviluppato da](#sviluppato-da)
+  - [Project structure](#project-structure)
   - [How to run](#how-to-run)
   - [Deploy](#deploy)
+  - [Documentazione](#documentazione)
   - [Note](#note)
 
 ## Descrizione 
@@ -16,6 +18,23 @@ SliceIT è un servizio web per la gestione semplificata di spese condivise svilu
 - Davide De Martini @davidedema
 - Francesco Poinelli @Vitho306
 - Riccardo Stiz @Rikistiz
+
+## Project structure
+![tree](imgREADME/Tree.png)
+
+- **controllers** : Contiene l'implementazione delle apis
+- **middleware** : Contiene il middleware, nel nostro caso il codice per verificare il toke jwt
+- **models** : Contiene i modelli mongoose per interfacciarsi al database
+- **routes** : Contiene le rotte e la documentazione della nostra applicazione
+- **test** : Contiene gli script di test scritti con jest
+- **documentation** : Contiene i file `.yaml` per la documentazione
+- .env.template : template per il file `.env` 
+- app.js : Contiene i setting iniziali del nostro servizio web
+- index.js : Entrypoint della nostra applicazione
+
+
+Tutti gli altri file sono file di setup secondari.
+
 
 ## How to run
 1) Per provare il progetto assicurarsi di avere nodejs (> v. 20.0.2) e npm installati. Per ubuntu:
