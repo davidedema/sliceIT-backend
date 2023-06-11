@@ -26,7 +26,7 @@ const router = express.Router();
  * /api/v1/groups/:groupId:
  *   get:
  *     summary: Get a group by id
- *     description: Get a group by id
+ *     description: Get a group by id. Only the ones that are in the group can access this resource
  *     tags: 
  *       - Groups
  *     produces:
@@ -120,7 +120,7 @@ router.get("/:groupId", validateToken, getGroup);
  * /api/v1/groups/:groupId/users:
  *   get:
  *     summary: Get the group users by it's id
- *     description: Get the group users by it's id
+ *     description: Get the group users by it's id. Only the ones that are in the group can access this resource
  *     tags: 
  *       - Groups
  *     produces:
@@ -219,7 +219,7 @@ router.get("/:groupId/users", validateToken, getGroupUsers);
  * /api/v1/groups/:groupId/outgoings:
  *   get:
  *     summary: Get the group users by it's id
- *     description: Get the group users by it's id
+ *     description: Get the group users by it's id. Only the ones that are in the group can access this resource
  *     tags: 
  *       - Groups
  *     produces:
@@ -524,7 +524,7 @@ router.put("/join-group", validateToken, joinGroup);
  * /api/v1/groups/:groupId:
  *   put:
  *     summary: Update a group
- *     description: Update the name, description, and group picture of a group
+ *     description: Update the name, description, and group picture of a group. Only the ones that are in the group can access this resource
  *     tags:
  *       - Groups
  *     produces:
@@ -636,7 +636,7 @@ router.put("/:groupId", validateToken, updateGroup);
  * /api/v1/groups/:groupId/leave-group:
  *   put:
  *     summary: Leave a group
- *     description: Leave a group
+ *     description: Leave a group. Only the ones that are in the group can access this resource
  *     tags:
  *       - Groups
  *     produces:

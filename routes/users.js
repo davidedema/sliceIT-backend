@@ -126,7 +126,7 @@ router.get("/:id", validateToken, getUser);
  * /api/v1/users/:id/groups:
  *   get:
  *     summary: Get the user groups by it's id
- *     description: Get the user groups by it's id
+ *     description: Get the user groups by it's id. Only the user with it's token can access this resource (security reasons)
  *     tags: 
  *       - Users
  *     produces:
@@ -230,7 +230,7 @@ router.get("/:id/groups", validateToken, getUserGroups);
  * /api/v1/users/:id/outgoings:
  *   get:
  *     summary: Get the user outgoings by it's id
- *     description: Get the user outgoings by it's id
+ *     description: Get the user outgoings by it's id. Only the user with it's token can access this resource (security reasons)
  *     tags: 
  *       - Users
  *     produces:
@@ -340,7 +340,7 @@ router.get("/:id/outgoings", validateToken, getUserOutgoings);
  * /api/v1/users/:id:
  *   put:
  *     summary: Modify an existing user
- *     description: Modify an existing user, with the specified data.
+ *     description: Modify an existing user, with the specified data. Only the user with it's token can modify itself(security reasons)
  *     tags:
  *       - Users
  *     produces:
@@ -481,7 +481,7 @@ router.put("/:id", validateToken, updateUser);
  * /api/v1/users/:id:
  *   delete:
  *     summary: Delete a user by id
- *     description: Delete a user by id
+ *     description: Delete a user by id. Only the user with it's token can delete itself (security reasons)
  *     tags: 
  *       - Users
  *     produces:
