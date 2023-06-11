@@ -29,6 +29,7 @@ SliceIT è un servizio web per la gestione semplificata di spese condivise svilu
 - **routes** : Contiene le rotte e la documentazione della nostra applicazione
 - **test** : Contiene gli script di test scritti con jest
 - **documentation** : Contiene i file `.yaml` per la documentazione
+- **project_docs** : Contiene i documenti scritti durante tutto il corso e i vari backlog
 - .env.template : template per il file `.env` 
 - app.js : Contiene i setting iniziali del nostro servizio web
 - index.js : Entrypoint della nostra applicazione
