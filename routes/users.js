@@ -540,6 +540,131 @@ router.put("/:id", validateToken, updateUser);
  */
 router.delete("/:id", validateToken, deleteUser);
 
+
+/**
+ * @swagger
+ * /api/v1/users/:id/report:
+ *   get:
+ *     summary: Get report by id
+ *     description: Get a report of the user
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         description: Id of the user
+ *         required: true
+ *  
+ *     responses:
+ *       200:
+ *         description: User's report retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 debtors:
+ *                   type: object
+ *                   properties:
+ *                     debtors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           debtors:
+ *                             type: string
+ *                             example: "6458c6466915e3b80523e0e6"
+ *                             description: ID of the debtor
+ *                           value:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 money:
+ *                                   type: number
+ *                                   example: 432432
+ *                                   description: Amount of money owed by the debtor
+ *                                 group:
+ *                                   type: string
+ *                                   example: "645a61e383d06be08c4252b7"
+ *                                   description: ID of the group
+ *                           totalValue:
+ *                             type: number
+ *                             example: 432464
+ *                             description: Total amount owed by all debtors
+ *                     total:
+ *                       type: number
+ *                       example: 432517
+ *                       description: Total amount owed by all debtors
+ *                 creditors:
+ *                   type: object
+ *                   properties:
+ *                     creditors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           creditor:
+ *                             type: string
+ *                             example: "6458c6466915e3b80523e0e6"
+ *                             description: ID of the creditor
+ *                           value:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 money:
+ *                                   type: number
+ *                                   example: 532
+ *                                   description: Amount of money owed to the creditor
+ *                                 group:
+ *                                   type: string
+ *                                   example: "645a61e383d06be08c4252b7"
+ *                                   description: ID of the group
+ *                           totalValue:
+ *                             type: number
+ *                             example: 2176
+ *                             description: Total amount owed by all creditors
+ *                     total:
+ *                       type: number
+ *                       example: 2176
+ *                       description: Total amount owed to all creditors
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Not authorized"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+*/
 router.get("/:id/report", validateToken, getReport);
 
 export default router;

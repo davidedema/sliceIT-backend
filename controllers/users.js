@@ -147,18 +147,33 @@ export const deleteUser = async (req, res) => {
 //Creditori
 function getCreditors(outgoings, id){
     const creditors = {
-        value: [],
         creditors: [],
         total: 0
     };
+
     for(let i = 0; i < outgoings.length; i++){
         if(!outgoings[i].paidBy.equals(id)){
             let user = outgoings[i].users.find(u => u.user.equals(id));
             if(!user){
                 continue;
             }
-            creditors.value.push(user.value);
-            creditors.creditors.push(outgoings[i].paidBy);
+            let existingCreditor = creditors.creditors.find(c => c.creditor.equals(outgoings[i].paidBy));
+            if(existingCreditor){
+                existingCreditor.value.push({
+                    money: user.value,
+                    group: outgoings[i].group,
+                });
+                existingCreditor.totalValue += user.value;
+            } else {
+                creditors.creditors.push({
+                    creditor: outgoings[i].paidBy,
+                    value: [{
+                        money: user.value,
+                        group: outgoings[i].group
+                    }],
+                    totalValue: user.value
+                });
+            }
             creditors.total += user.value;
         }
     }
@@ -168,20 +183,54 @@ function getCreditors(outgoings, id){
 //Debitori
 function getDebtors(outgoings, id){
     const debtors = {
-        value: [],
         debtors: [],
         total: 0
     };
     for(let i = 0; i < outgoings.length; i++){
         if(outgoings[i].paidBy.equals(id)){
             for(let j = 0; j < outgoings[i].users.length; j++){
-                debtors.debtors.push(outgoings[i].users[j].user);
-                debtors.value.push(outgoings[i].users[j].value);
-                debtors.total += outgoings[i].users[j].value;
+                let existingDebtors = debtors.debtors.find(d => d.debtors.equals(outgoings[i].users[j].user));
+                if(existingDebtors){
+                    existingDebtors.value.push({
+                        money: outgoings[i].users[j].value,
+                        group: outgoings[i].group
+                    });
+                    existingDebtors.totalValue += outgoings[i].users[j].value;
+                } else {
+                    debtors.debtors.push({
+                        debtors: outgoings[i].users[j].user,
+                        value: [{
+                            money: outgoings[i].users[j].value,
+                            group: outgoings[i].group
+                        }],
+                        totalValue: outgoings[i].users[j].value
+                    });
+                }
+                debtors.total += outgoings[i].users[j].value;;
             }
         }
     }
     return debtors;    
+}
+
+function checkDebtorsCreditors(debtors, creditors){
+    for(let i = 0; i < debtors.debtors.length; i++){
+        for(let j = 0; j < creditors.creditors.length; j++){
+            if(debtors.debtors[i].debtors.equals(creditors.creditors[j].creditor)){
+                if(debtors.debtors[i].totalValue > creditors.creditors[j].totalValue){
+                    debtors.debtors[i].totalValue -= creditors.creditors[j].totalValue;
+                    creditors.creditors.splice(j, 1);
+                } else if(debtors.debtors[i].totalValue < creditors.creditors[j].totalValue){
+                    creditors.creditors[j].totalValue -= debtors.debtors[i].totalValue;
+                    debtors.debtors.splice(i, 1);
+                } else {
+                    debtors.debtors.splice(i, 1);
+                    creditors.creditors.splice(j, 1);
+                }
+            }
+        }
+    }
+    return {debtors, creditors};
 }
 
 //Bilancio
@@ -195,10 +244,11 @@ export const getReport = async (req, res) => {
         const outgoings = await Outgoing.find({ _id: { $in: user.outgoings } });
         if (!outgoings)
             return res.status(404).json({ message: 'Outgoings not found' });
-
-        const debtors = getDebtors(outgoings, id);
-        const creditors = getCreditors(outgoings, id); 
         
+        const people = checkDebtorsCreditors(getDebtors(outgoings, id), getCreditors(outgoings, id));
+        const debtors = people.debtors;
+        const creditors = people.creditors;
+
         res.status(200).json({ debtors, creditors });
     } catch (error) {
         res.status(404).json({ message: error.message });
