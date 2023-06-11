@@ -259,21 +259,6 @@ export const leaveGroup = async (req, res) => {
         // Rimuovi l'utente dal gruppo
         group.members.pull(userId);
 
-        /*// Verifica se il gruppo è rimasto senza utenti
-    if (group.members.length === 0) {
-      // Trova tutte le spese associate al gruppo
-      const expenses = await Expense.find({ group: groupId });
-
-      // Rimuovi il riferimento al gruppo da tutte le spese
-      for (const expense of expenses) {
-        expense.group = null;
-        await expense.save();
-      }
-
-      // Elimina il gruppo
-      await Group.findByIdAndDelete(groupId);
-    }*/ //attenzione che diventa una delete e non più una put
-
     await group.save();
     res.json({ group });
   } catch (error) {
