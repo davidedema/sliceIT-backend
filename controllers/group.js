@@ -195,7 +195,8 @@ export const updateGroup = async (req, res) => {
     try {
         const { groupId } = req.params;
         const { name, description, groupPicture } = req.body;
-
+        if(!name || !description || !groupPicture)
+            return res.status(400).json({message : 'missing fields'})
         // id utente
         let token = req.header("x-auth-token");
         if (token.startsWith("Bearer ")) {
